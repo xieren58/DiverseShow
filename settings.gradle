@@ -1,2 +1,6 @@
+include ':features:ds-home'
+include ':components:base'
+include ':components:common-net'
+include ':components:common-util'
 include ':app'
 rootProject.name = "DiverseShow"

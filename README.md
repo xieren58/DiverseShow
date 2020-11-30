@@ -13,7 +13,7 @@
 > **app**： 壳module，非必要不允许添加代码在这个module；
 > **components**：组件module，公共层Module，包括：
     >- base: 基础框架封装；
-    >- common：公共层封装，例如 util、widget等；
-    >- api层：其它业务module的api；
+    >- common：公共层封装，例如 util、widget等，命名：common-util等；
+    >- api层：其它业务module的api，命名：api-feature等；
     ....
-> **features**：业务module，里面可以新建和操作多个module；
+> **features**：业务module，里面可以新建和操作多个module，命名：ds-feature等

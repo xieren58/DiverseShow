@@ -3,6 +3,9 @@ package com.four.buildsrc
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 
+/**
+ * 所有依赖的库
+ */
 object Dep {
 
     const val kotlinStdlib = "org.jetbrains.kotlin:kotlin-stdlib:${Env.KOTLIN_VERSION}"

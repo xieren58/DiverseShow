@@ -2,6 +2,9 @@ package com.four.buildsrc
 
 import org.gradle.api.JavaVersion
 
+/**
+ * 打包配置的全部属性
+ */
 object Env {
 
     const val VERSION = "1.0.0"
