@@ -2,6 +2,8 @@
 
 com.four.buildsrc.util.Logger.init(project)
 
+plugins.apply(com.four.buildsrc.compile.AssembleDebugForAarPlugin::class.java)
+
 buildscript {
     val kotlinVersion by extra(com.four.buildsrc.Env.KOTLIN_VERSION)
     repositories {
@@ -21,6 +23,11 @@ allprojects {
     repositories {
         google()
         jcenter()
+        flatDir {
+            dirs(
+                "${project.rootDir}/compile/aars"
+            )
+        }
     }
 
     //配置java、kotlin

@@ -1,6 +1,7 @@
 package com.four.buildsrc
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 
 /**
@@ -19,13 +20,15 @@ object Dep {
     const val junit = "junit:junit:4.+"
     const val junitExt = "androidx.test.ext:junit:1.1.2"
     const val espressoCore = "androidx.test.espresso:espresso-core:3.3.0"
+
+    const val commonNetProject = ":components:common-net"
 }
 
 fun DependencyHandlerScope.impl(variant: String) {
     dependencies.add("implementation", variant)
 }
 
-fun DependencyHandlerScope.impl(project: Project) {
+fun DependencyHandlerScope.impl(project: ProjectDependency) {
     dependencies.add("implementation", project)
 }
 

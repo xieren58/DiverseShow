@@ -40,4 +40,6 @@ dependencies {
     testImpl(Dep.junit)
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
+
+    impl(project(Dep.commonNetProject))
 }

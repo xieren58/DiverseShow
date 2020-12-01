@@ -1,6 +1,105 @@
 package com.four.buildsrc.compile
 
+import com.android.build.gradle.internal.plugins.AppPlugin
+import com.four.buildsrc.util.*
 import org.gradle.api.DefaultTask
+import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
+import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
+import org.gradle.api.tasks.TaskAction
+import org.gradle.buildinit.plugins.internal.maven.ProjectDependency
+import org.json.JSONArray
+import org.json.JSONObject
+import java.io.File
 
-class AssembleDebugForAar : DefaultTask() {
+/**
+ * 拷贝aar，并且将依赖库生成json文件
+ * aar的版本指定为1.0
+ */
+open class AssembleDebugForAar : DefaultTask() {
+
+    companion object {
+        const val NAME = "assembleDebugForAar"
+    }
+
+    init {
+        enabled =
+            if (project != project.rootProject && !project.plugins.hasPlugin(AppPlugin::class.java)) {
+                this.dependsOn("${project.path}:assembleDebug")
+                true
+            } else {
+                false
+            }
+
+        group = "buildsrc"
+    }
+
+    /**
+     * 简化版，project依赖就不考虑版本问题
+     */
+    @TaskAction
+    fun doAction() {
+        val copyAarPath = "${project.buildDir}/outputs/aar/${project.name}-debug.aar"
+        val buildPath = "${project.rootDir}/compile/aars/${project.name}"
+        val aarPath = "$buildPath/${project.name}:1.0.aar"
+        val depJsonPath = "$buildPath/${project.name}:1.0.json"
+
+        if (!File(copyAarPath).exists()) {
+            Logger.log("${project.name} aar file not find!!!")
+            Logger.log("${project.name} aar file not find!!!")
+            Logger.log("${project.name} aar file not find!!!")
+            return
+        }
+
+        //将aar copy到/aar_build
+        FileUtil.copyFileByOverlay(aarPath, copyAarPath)
+
+        val target = JSONObject()
+        //扫描implementation
+        target.put(DepConstant.IMPLEMENTATION_NAME,
+            createJSONObjects("implementation"))
+        //扫描testImplementation
+        target.put(DepConstant.TEST_IMPLEMENTATION_NAME,
+            createJSONObjects("testImplementation"))
+        //扫描androidTestImplementation
+        target.put(DepConstant.ANDROID_TEST_IMPLEETATION_NAME,
+            createJSONObjects("androidTestImplementation"))
+        //写入json
+        FileUtil.writeStringByOverlay(depJsonPath, target.toString())
+    }
+
+    private fun createJSONObjects(configName: String): JSONArray {
+        val implArray = JSONArray()
+        project.configurations.asMap[configName]?.allDependencies?.apply {
+            var index = 0
+            forEach {
+                val depObj = JSONObject(this.size)
+                depObj.put(DepConstant.DEP_GROUP, it.group)
+                depObj.put(DepConstant.DEP_NAME, it.name)
+                if (it.version.isNullOrEmpty() || it.version == "unspecified") {
+                    depObj.put(DepConstant.DEP_VERSION, "1.0")
+                } else {
+                    depObj.put(DepConstant.DEP_VERSION, it.version)
+                }
+                //暂时只考虑了aar project jar repo依赖的情况
+                //aar 的版本只为1.0
+                if (it is DefaultProjectDependency) {
+                    depObj.put(DepConstant.DEP_EXT, DepConstant.Ext.PROJECT)
+                    depObj.put(DepConstant.DEP_PROJECT_PATH, it.dependencyProject.path)
+                } else if (it is DefaultExternalModuleDependency) {
+                    if (it.artifacts.size != 0)  {
+                        it.artifacts.forEach out@ { art ->
+                            depObj.put(DepConstant.DEP_EXT, art.type)
+                            return@out
+                        }
+                    } else {
+                        depObj.put(DepConstant.DEP_EXT,DepConstant.Ext.REPO)
+                    }
+                } else {
+                    depObj.put(DepConstant.DEP_EXT,DepConstant.Ext.REPO)
+                }
+                implArray.put(index++, depObj)
+            }
+        }
+        return implArray
+    }
 }
