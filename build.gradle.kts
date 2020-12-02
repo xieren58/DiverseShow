@@ -25,7 +25,7 @@ allprojects {
         jcenter()
         flatDir {
             dirs(
-                "${project.rootDir}/compile/aars"
+                "${project.rootDir}/compile/aars/"
             )
         }
     }

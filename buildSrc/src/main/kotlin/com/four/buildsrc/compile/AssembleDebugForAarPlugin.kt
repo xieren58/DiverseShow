@@ -1,6 +1,7 @@
 package com.four.buildsrc.compile
 
 import com.android.build.gradle.internal.plugins.AppPlugin
+import com.android.build.gradle.internal.plugins.LibraryPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -10,17 +11,29 @@ import org.gradle.api.Project
 class AssembleDebugForAarPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
+        DepInterceptor.rootProject = DepInterceptor.rootProject ?: findRootProject(target)
+        DepInterceptor.openAarRun = try {
+            target.properties["compile.openAarRun"].toString().toBoolean()
+        } catch (e: Exception) {
+            false
+        }
+
         target.afterEvaluate {
             val rootProject = findRootProject(target)
             //根project则是所有都添加task，反之只添加当前
             if (rootProject == target) {
                 target.allprojects {
-                    addTaskToSubObject(this)
+                    this.afterEvaluate {
+                        if (this.plugins.hasPlugin(LibraryPlugin::class.java)) {
+                            addTaskToSubObject(this)
+                        }
+                    }
                 }
             } else {
                 addTaskToSubObject(target)
             }
         }
+
     }
 
     private fun findRootProject(project: Project): Project {

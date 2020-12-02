@@ -1,12 +1,12 @@
 package com.four.buildsrc.compile
 
 import com.android.build.gradle.internal.plugins.AppPlugin
+import com.four.buildsrc.compile.json.DepConstant
 import com.four.buildsrc.util.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.tasks.TaskAction
-import org.gradle.buildinit.plugins.internal.maven.ProjectDependency
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -19,6 +19,10 @@ open class AssembleDebugForAar : DefaultTask() {
 
     companion object {
         const val NAME = "assembleDebugForAar"
+
+        const val BUILD_AAR_DIR = "/compile/aars"
+
+        const val BUILD_JSON_DIR = "/compile/jsons"
     }
 
     init {
@@ -30,7 +34,7 @@ open class AssembleDebugForAar : DefaultTask() {
                 false
             }
 
-        group = "buildsrc"
+        group = "aarrun"
     }
 
     /**
@@ -39,9 +43,10 @@ open class AssembleDebugForAar : DefaultTask() {
     @TaskAction
     fun doAction() {
         val copyAarPath = "${project.buildDir}/outputs/aar/${project.name}-debug.aar"
-        val buildPath = "${project.rootDir}/compile/aars/${project.name}"
-        val aarPath = "$buildPath/${project.name}:1.0.aar"
-        val depJsonPath = "$buildPath/${project.name}:1.0.json"
+        val buildAarPath = "${project.rootDir}$BUILD_AAR_DIR/"
+        val buildJsonPath = "${project.rootDir}$BUILD_JSON_DIR"
+        val aarPath = "$buildAarPath/${project.name}-${DepConstant.Default.VERSION}.aar"
+        val depJsonPath = "$buildJsonPath/${project.name}-${DepConstant.Default.VERSION}.json"
 
         if (!File(copyAarPath).exists()) {
             Logger.log("${project.name} aar file not find!!!")
@@ -55,13 +60,16 @@ open class AssembleDebugForAar : DefaultTask() {
 
         val target = JSONObject()
         //扫描implementation
-        target.put(DepConstant.IMPLEMENTATION_NAME,
+        target.put(
+            DepConstant.IMPLEMENTATION_NAME,
             createJSONObjects("implementation"))
         //扫描testImplementation
-        target.put(DepConstant.TEST_IMPLEMENTATION_NAME,
+        target.put(
+            DepConstant.TEST_IMPLEMENTATION_NAME,
             createJSONObjects("testImplementation"))
         //扫描androidTestImplementation
-        target.put(DepConstant.ANDROID_TEST_IMPLEETATION_NAME,
+        target.put(
+            DepConstant.ANDROID_TEST_IMPLEETATION_NAME,
             createJSONObjects("androidTestImplementation"))
         //写入json
         FileUtil.writeStringByOverlay(depJsonPath, target.toString())
@@ -76,26 +84,34 @@ open class AssembleDebugForAar : DefaultTask() {
                 depObj.put(DepConstant.DEP_GROUP, it.group)
                 depObj.put(DepConstant.DEP_NAME, it.name)
                 if (it.version.isNullOrEmpty() || it.version == "unspecified") {
-                    depObj.put(DepConstant.DEP_VERSION, "1.0")
+                    depObj.put(DepConstant.DEP_VERSION, DepConstant.Default.VERSION)
                 } else {
                     depObj.put(DepConstant.DEP_VERSION, it.version)
                 }
+
                 //暂时只考虑了aar project jar repo依赖的情况
                 //aar 的版本只为1.0
-                if (it is DefaultProjectDependency) {
-                    depObj.put(DepConstant.DEP_EXT, DepConstant.Ext.PROJECT)
-                    depObj.put(DepConstant.DEP_PROJECT_PATH, it.dependencyProject.path)
-                } else if (it is DefaultExternalModuleDependency) {
-                    if (it.artifacts.size != 0)  {
-                        it.artifacts.forEach out@ { art ->
-                            depObj.put(DepConstant.DEP_EXT, art.type)
-                            return@out
-                        }
-                    } else {
-                        depObj.put(DepConstant.DEP_EXT,DepConstant.Ext.REPO)
+                when (it) {
+                    is DefaultProjectDependency -> {
+                        depObj.put(DepConstant.DEP_GROUP, DepConstant.Default.GROUP)
+                        depObj.put(DepConstant.DEP_EXT, DepConstant.Ext.PROJECT)
+                        depObj.put(DepConstant.DEP_PROJECT_PATH, it.dependencyProject.path)
                     }
-                } else {
-                    depObj.put(DepConstant.DEP_EXT,DepConstant.Ext.REPO)
+                    is DefaultExternalModuleDependency -> {
+                        if (it.artifacts.size != 0)  {
+                            it.artifacts.forEach out@ { art ->
+                                depObj.put(DepConstant.DEP_EXT, art.type)
+                                return@out
+                            }
+                        } else {
+                            depObj.put(DepConstant.DEP_EXT, DepConstant.Ext.REPO)
+                        }
+                        depObj.put(DepConstant.DEP_PROJECT_PATH, "")
+                    }
+                    else -> {
+                        depObj.put(DepConstant.DEP_EXT, DepConstant.Ext.REPO)
+                        depObj.put(DepConstant.DEP_PROJECT_PATH, "")
+                    }
                 }
                 implArray.put(index++, depObj)
             }

@@ -1,8 +1,8 @@
 package com.four.buildsrc
 
-import org.gradle.api.Project
-import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.kotlin.dsl.DependencyHandlerScope
+import com.four.buildsrc.compile.DepInterceptor
+import org.gradle.kotlin.dsl.accessors.runtime.addExternalModuleDependencyTo
 
 /**
  * 所有依赖的库
@@ -21,21 +21,41 @@ object Dep {
     const val junitExt = "androidx.test.ext:junit:1.1.2"
     const val espressoCore = "androidx.test.espresso:espresso-core:3.3.0"
 
+    const val commonBaseProject = ":components:common-base"
     const val commonNetProject = ":components:common-net"
+    const val commonUtilProject = ":components:common-util"
+
+    const val featureHomeProject = ":features:ds-home"
 }
 
-fun DependencyHandlerScope.impl(variant: String) {
-    dependencies.add("implementation", variant)
+fun DependencyHandlerScope.implRepo(variant: String) {
+    if (!DepInterceptor.interceptImplRepo(this, variant)) {
+        dependencies.add("implementation", variant)
+    }
 }
 
-fun DependencyHandlerScope.impl(project: ProjectDependency) {
-    dependencies.add("implementation", project)
+fun DependencyHandlerScope.implProject(path: String) {
+    if (!DepInterceptor.interceptImplProject(this, path)) {
+        dependencies.add("implementation", project(mapOf("path" to path)))
+    }
+}
+
+fun DependencyHandlerScope.implAar(name: String, group: String = "", version: String? = null) {
+    if (!DepInterceptor.interceptImplAar(this, name, group, version)) {
+        addExternalModuleDependencyTo(this.dependencies,
+            "implementation", group, name, version,
+            null, null, "aar", null)
+    }
 }
 
 fun DependencyHandlerScope.testImpl(variant: String) {
-    dependencies.add("testImplementation", variant)
+    if (!DepInterceptor.interceptTestImpl(this, variant)) {
+        dependencies.add("testImplementation", variant)
+    }
 }
 
 fun DependencyHandlerScope.androidTestImpl(variant: String) {
-    dependencies.add("androidTestImplementation", variant)
+    if (!DepInterceptor.interceptAndroidTestImpl(this, variant)) {
+        dependencies.add("androidTestImplementation", variant)
+    }
 }

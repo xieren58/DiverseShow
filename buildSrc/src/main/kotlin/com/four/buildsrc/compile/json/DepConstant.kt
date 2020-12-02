@@ -1,4 +1,4 @@
-package com.four.buildsrc.compile
+package com.four.buildsrc.compile.json
 
 object DepConstant {
 
@@ -23,5 +23,10 @@ object DepConstant {
         const val AAR = "aar"
         const val JAR = "jar"
         const val REPO = "repo"
+    }
+
+    object Default {
+        const val GROUP = ""
+        const val VERSION = "1.0"
     }
 }

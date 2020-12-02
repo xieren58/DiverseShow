@@ -1,5 +1,4 @@
 import com.four.buildsrc.*
-import com.four.buildsrc.util.Logger.log
 
 plugins {
     id("com.android.application")
@@ -30,18 +29,15 @@ android  {
 
 dependencies {
 
-    impl(Dep.kotlinStdlib)
-    impl(Dep.coreKTX)
-    impl(Dep.appcompat)
-    impl(Dep.googleMaterial)
-    impl(Dep.constraintLayout)
+    implRepo(Dep.kotlinStdlib)
+    implRepo(Dep.coreKTX)
+    implRepo(Dep.appcompat)
+    implRepo(Dep.googleMaterial)
+    implRepo(Dep.constraintLayout)
     testImpl(Dep.junit)
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
+
+    implProject(Dep.featureHomeProject)
 }
 
-//afterEvaluate {
-//        project.configurations.asMap["implementation"]?.allDependencies?.forEach {
-//        log(it.name)
-//    }
-//}

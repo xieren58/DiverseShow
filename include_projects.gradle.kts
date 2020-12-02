@@ -13,26 +13,39 @@ val allProjects = arrayOf(
 
 gradle.settingsEvaluated {
     //这里我只能想到手解属性，似乎在settings.gradle下找不到properties
-    var targetStr = "off"
-    val targetPropertyName = "includeProjects"
+    val includeProjectsName = "includeProjects"
+    val outProjectsName = "outProjects"
     file("$rootDir/gradle.properties")
         .readLines()
         .forEach find@ {
-        if (it.contains(targetPropertyName)) {
-            targetStr = it
-                .replace(" ", "")
-                .replace("$targetPropertyName=", "")
-            return@find
-        }
+            if (it.contains(includeProjectsName)) {
+                val targetStr = it
+                    .replace(" ", "")
+                    .replace("$includeProjectsName=", "")
+                handleIncludeProjects(settings, targetStr)
+                return@find
+            }
+            if(it.contains(outProjectsName)) {
+                val targetStr = it
+                    .replace(" ", "")
+                    .replace("$outProjectsName=", "")
+                handleOutProjects(settings, targetStr)
+                return@find
+            }
     }
-    if ("off" == targetStr || targetStr.isEmpty()) {
-        return@settingsEvaluated
-    } else if ("all" == targetStr) {
+
+    println("finish include projects.")
+}
+
+fun handleIncludeProjects(settings: Settings, str: String) {
+    if ("off" == str || str.isEmpty()) {
+        return
+    } else if ("all" == str) {
         allProjects.forEach {
             settings.include(it)
         }
     } else {
-        targetStr.split(",").forEach { target->
+        str.split(",").forEach { target->
             allProjects.forEach { project ->
                 if (project.endsWith(target)) {
                     settings.include(project)
@@ -40,8 +53,28 @@ gradle.settingsEvaluated {
             }
         }
     }
+}
 
-    println("finish include projects.")
+fun handleOutProjects(settings: Settings, str: String) {
+    if (str.isEmpty() || "all" == str) {
+        return
+    } else if ("off" == str) {
+        allProjects.forEach {
+            settings.include(it)
+        }
+    } else {
+        val list = allProjects.toMutableList()
+        str.split(",").forEach { target->
+            allProjects.forEach { project ->
+                if (project.endsWith(target)) {
+                    list.remove(project)
+                }
+            }
+        }
+        list.forEach {
+            settings.include(it)
+        }
+    }
 }
 
 

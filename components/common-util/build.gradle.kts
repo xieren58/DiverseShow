@@ -1,5 +1,5 @@
 import com.four.buildsrc.androidTestImpl
-import com.four.buildsrc.impl
+import com.four.buildsrc.implRepo
 import com.four.buildsrc.testImpl
 import com.four.buildsrc.Env
 import com.four.buildsrc.Dep
@@ -32,11 +32,11 @@ android  {
 
 dependencies {
 
-    impl(Dep.kotlinStdlib)
-    impl(Dep.coreKTX)
-    impl(Dep.appcompat)
-    impl(Dep.googleMaterial)
-    impl(Dep.constraintLayout)
+    implRepo(Dep.kotlinStdlib)
+    implRepo(Dep.coreKTX)
+    implRepo(Dep.appcompat)
+    implRepo(Dep.googleMaterial)
+    implRepo(Dep.constraintLayout)
     testImpl(Dep.junit)
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
