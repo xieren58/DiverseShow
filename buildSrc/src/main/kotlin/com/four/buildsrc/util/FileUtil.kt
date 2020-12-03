@@ -22,15 +22,16 @@ object FileUtil {
 
     fun generateFileSafely(path: String) {
         val file = File(path)
-        if (file.isFile) {
-            if (!file.exists()) {
-                generateFileSafely(file.parentFile.absolutePath)
+        if (!file.exists()) {
+            val last = path.lastIndexOf('/') + 1
+            if (last <= 0) {
+                throw RuntimeException("the path is error. $path")
+            } else {
+                val dirFile = File(path.substring(0, last))
+                if (!dirFile.exists()) {
+                    dirFile.mkdirs()
+                }
                 file.createNewFile()
-            }
-        }
-        if (file.isDirectory) {
-            if (!file.exists()) {
-                file.mkdirs()
             }
         }
     }

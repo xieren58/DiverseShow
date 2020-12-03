@@ -40,4 +40,9 @@ dependencies {
     testImpl(Dep.junit)
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
+
+    implRepo(Dep.lifecycleLiveDataKTX)
+    implRepo(Dep.lifecycleViewModelKTX)
+    implRepo(Dep.lifecycleExtensions)
+    implRepo(Dep.eventLine)
 }

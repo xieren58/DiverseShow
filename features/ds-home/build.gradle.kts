@@ -42,11 +42,11 @@ dependencies {
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
 
-    implProject(Dep.commonNetProject)
+    implProject(Dep.commonBaseProject)
 }
 
 afterEvaluate {
     project.configurations.asMap["implementation"]?.allDependencies?.forEach {
-        com.four.buildsrc.util.Logger.log(it.name + it.version)
+        com.four.buildsrc.util.Logger.log(it::class.java.simpleName + it.name + it.version)
     }
 }

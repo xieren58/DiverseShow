@@ -13,7 +13,9 @@ class AssembleDebugForAarPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         DepInterceptor.rootProject = DepInterceptor.rootProject ?: findRootProject(target)
         DepInterceptor.openAarRun = try {
-            target.properties["compile.openAarRun"].toString().toBoolean()
+            val run = target.properties["compile.openAarRun"].toString().toBoolean()
+            println("aar run $run")
+            run
         } catch (e: Exception) {
             false
         }

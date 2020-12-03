@@ -1,3 +1,5 @@
+import java.net.URI
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 com.four.buildsrc.util.Logger.init(project)
@@ -23,9 +25,10 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven(URI("https://jitpack.io"))
         flatDir {
             dirs(
-                "${project.rootDir}/compile/aars/"
+                "${project.rootDir}/aarrun/aars/"
             )
         }
     }

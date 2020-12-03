@@ -20,9 +20,9 @@ open class AssembleDebugForAar : DefaultTask() {
     companion object {
         const val NAME = "assembleDebugForAar"
 
-        const val BUILD_AAR_DIR = "/compile/aars"
+        const val BUILD_AAR_DIR = "/aarrun/aars"
 
-        const val BUILD_JSON_DIR = "/compile/jsons"
+        const val BUILD_JSON_DIR = "/aarrun/jsons"
     }
 
     init {
@@ -43,7 +43,7 @@ open class AssembleDebugForAar : DefaultTask() {
     @TaskAction
     fun doAction() {
         val copyAarPath = "${project.buildDir}/outputs/aar/${project.name}-debug.aar"
-        val buildAarPath = "${project.rootDir}$BUILD_AAR_DIR/"
+        val buildAarPath = "${project.rootDir}$BUILD_AAR_DIR"
         val buildJsonPath = "${project.rootDir}$BUILD_JSON_DIR"
         val aarPath = "$buildAarPath/${project.name}-${DepConstant.Default.VERSION}.aar"
         val depJsonPath = "$buildJsonPath/${project.name}-${DepConstant.Default.VERSION}.json"
