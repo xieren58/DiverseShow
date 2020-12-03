@@ -21,4 +21,7 @@
 * **features**：业务module，里面可以新建和操作多个module，命名：ds-xxx格式   
     
 ## 代码使用     
-* **aarrun**：在项目根目录下的gradle.properties中就可以看到，怎么使用，默认aarrun是打开的；
+* **aarrun**：    
+>- 在项目根目录下的gradle.properties中就可以看到怎么使用，默认aarrun是打开的；    
+>- 如果觉得aarrun出现问题，可以使用`compile.openAarRun=false`关闭，并使用`includeProjects=all`依赖所有模块；     
+>- 新建模块时，将build.gradle尾缀加一个kts，将其它业务模块的脚本复制过来就行；    
