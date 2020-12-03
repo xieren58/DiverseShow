@@ -18,4 +18,7 @@
 >- api层：其它业务module的api，命名：api-feature等；    
     ....    
     
-* **features**：业务module，里面可以新建和操作多个module，命名：ds-feature等.   
+* **features**：业务module，里面可以新建和操作多个module，命名：ds-xxx格式   
+    
+## 代码使用     
+* **aarrun**：在项目根目录下的gradle.properties中就可以看到，怎么使用，默认aarrun是打开的；
