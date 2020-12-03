@@ -8,7 +8,10 @@ val allProjects = arrayOf(
     ":components:common-net",
     ":components:common-util",
 
-    ":features:ds-home"
+    ":features:ds-home",
+    ":features:ds-weather",
+
+    ":components:api:api-weather"
 )
 
 gradle.settingsEvaluated {

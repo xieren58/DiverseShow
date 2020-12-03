@@ -5,6 +5,7 @@ import com.four.buildsrc.compile.json.DepJsonParser
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.accessors.runtime.addExternalModuleDependencyTo
+import org.gradle.kotlin.dsl.project
 import java.io.File
 
 /**
@@ -20,7 +21,7 @@ object DepInterceptor {
     /**
      * 目前只拦截project类型
      */
-    fun interceptImplProject(handlerScope: DependencyHandlerScope, path: String) : Boolean {
+    fun interceptImplProject(handlerScope: DependencyHandlerScope, path: String, fromKts: Boolean = true) : Boolean {
         val rootProj : Project = rootProject ?: return false
         if (!openAarRun) {
             return false
@@ -31,6 +32,13 @@ object DepInterceptor {
             if (project.path == path) {
                 target = project
             }
+        }
+
+        //不是来自于脚本，则需要手动添加project
+        if (!fromKts && target != null) {
+            handlerScope.dependencies.add("implementation",
+                handlerScope.dependencies.project(target!!.path))
+            return true
         }
 
         //不存在则依赖它的aar
@@ -45,7 +53,7 @@ object DepInterceptor {
             val aarPath = "$buildAarPath/$name-${DepConstant.Default.VERSION}.aar"
             val depJsonPath = "$buildJsonPath/$name-${DepConstant.Default.VERSION}.json"
 
-            println("aar dir: $buildAarPath")
+            println("dep json dir: $depJsonPath")
 
             val aarFile = File(aarPath)
             val jsonFile = File(depJsonPath)
@@ -58,17 +66,13 @@ object DepInterceptor {
             bean.impls.forEach {
                 when (it.ext) {
                     DepConstant.Ext.REPO -> {
-                        interceptImplRepo(handlerScope, "${it.group}:${it.name}:${it.version}")
+                        interceptImplRepo(handlerScope, "${it.group}:${it.name}:${it.version}", fromKts = false)
                     }
                     DepConstant.Ext.PROJECT -> {
-                        interceptImplProject(handlerScope, it.projectPath!!)
+                        interceptImplProject(handlerScope, it.projectPath!!, fromKts = false)
                     }
                     else -> {
-                        addExternalModuleDependencyTo(
-                            handlerScope.dependencies, "implementation",
-                            it.group, name, it.version, null, null,
-                            it.ext, null
-                        )
+                        interceptImplAar(handlerScope, it.name, it.group, it.version, fromKts = false)
                     }
                 }
             }
@@ -80,11 +84,8 @@ object DepInterceptor {
             }
 
             //依赖自己的aar
-            addExternalModuleDependencyTo(
-                handlerScope.dependencies, "implementation",
-                DepConstant.Default.GROUP, name, DepConstant.Default.VERSION, null,
-                null, DepConstant.Ext.AAR, null
-            )
+            interceptImplAar(handlerScope, name, DepConstant.Default.GROUP,
+                DepConstant.Default.VERSION, fromKts = false)
 
             true
         } else false
@@ -93,19 +94,33 @@ object DepInterceptor {
     fun interceptImplAar(handlerScope: DependencyHandlerScope,
                          name: String,
                          group: String = "",
-                         version: String? = null) : Boolean {
+                         version: String? = null,
+                         fromKts: Boolean = true) : Boolean {
+        if (!fromKts) {
+            addExternalModuleDependencyTo(
+                handlerScope.dependencies, "implementation",
+                group, name, version, null, null,
+                DepConstant.Ext.AAR, null)
+            return true
+        }
         return false
     }
 
-    fun interceptImplRepo(handlerScope: DependencyHandlerScope, variant: String) : Boolean {
+    fun interceptImplRepo(handlerScope: DependencyHandlerScope,
+                          variant: String,
+                          fromKts: Boolean = true) : Boolean {
         return false
     }
 
-    fun interceptTestImpl(handlerScope: DependencyHandlerScope, variant: String) : Boolean {
+    fun interceptTestImpl(handlerScope: DependencyHandlerScope,
+                          variant: String,
+                          fromKts: Boolean = true) : Boolean {
         return false
     }
 
-    fun interceptAndroidTestImpl(handlerScope: DependencyHandlerScope, variant: String) : Boolean {
+    fun interceptAndroidTestImpl(handlerScope: DependencyHandlerScope,
+                                 variant: String,
+                                 fromKts: Boolean = true) : Boolean {
         return false
     }
 }

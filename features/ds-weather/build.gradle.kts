@@ -44,7 +44,6 @@ dependencies {
     androidTestImpl(Dep.espressoCore)
 
     implProject(Dep.commonBaseProject)
-    implProject(Dep.apiWeatherProject)
 }
 
 //afterEvaluate {

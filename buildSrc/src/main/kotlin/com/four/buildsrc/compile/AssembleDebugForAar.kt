@@ -81,7 +81,7 @@ open class AssembleDebugForAar : DefaultTask() {
             var index = 0
             forEach {
                 val depObj = JSONObject(this.size)
-                depObj.put(DepConstant.DEP_GROUP, it.group)
+                depObj.put(DepConstant.DEP_GROUP, it.group ?: "")
                 depObj.put(DepConstant.DEP_NAME, it.name)
                 if (it.version.isNullOrEmpty() || it.version == "unspecified") {
                     depObj.put(DepConstant.DEP_VERSION, DepConstant.Default.VERSION)

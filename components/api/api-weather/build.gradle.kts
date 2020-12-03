@@ -8,7 +8,6 @@ import com.four.buildsrc.Dep
 plugins {
     id("com.android.library")
     id("kotlin-android")
-    id("kotlin-android-extensions")
 }
 
 android  {
@@ -37,18 +36,6 @@ dependencies {
     implRepo(Dep.kotlinStdlib)
     implRepo(Dep.coreKTX)
     implRepo(Dep.appcompat)
-    implRepo(Dep.googleMaterial)
-    implRepo(Dep.constraintLayout)
-    testImpl(Dep.junit)
-    androidTestImpl(Dep.junitExt)
-    androidTestImpl(Dep.espressoCore)
 
-    implProject(Dep.commonBaseProject)
-    implProject(Dep.apiWeatherProject)
+    implProject(Dep.featureWeatherProject)
 }
-
-//afterEvaluate {
-//    project.configurations.asMap["implementation"]?.allDependencies?.forEach {
-//        com.four.buildsrc.util.Logger.log(it::class.java.simpleName + it.name + it.version)
-//    }
-//}

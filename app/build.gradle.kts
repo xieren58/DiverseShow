@@ -41,3 +41,9 @@ dependencies {
     implProject(Dep.featureHomeProject)
 }
 
+afterEvaluate {
+    project.configurations.asMap["implementation"]?.allDependencies?.forEach {
+        com.four.buildsrc.util.Logger.log("${it::class.java.simpleName} ${it.name} ${it.version}")
+    }
+}
+

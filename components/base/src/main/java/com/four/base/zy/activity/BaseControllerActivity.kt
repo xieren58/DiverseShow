@@ -21,5 +21,5 @@ abstract class BaseControllerActivity<T : BaseController<*>> : BaseActivity() {
         controller = createController()
     }
 
-    protected abstract fun createController() : T
+    protected abstract fun createController() : T?
 }

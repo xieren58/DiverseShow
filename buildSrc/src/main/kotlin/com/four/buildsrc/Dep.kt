@@ -21,17 +21,20 @@ object Dep {
     const val junitExt = "androidx.test.ext:junit:1.1.2"
     const val espressoCore = "androidx.test.espresso:espresso-core:3.3.0"
 
-    const val commonBaseProject = ":components:base"
-    const val commonNetProject = ":components:common-net"
-    const val commonUtilProject = ":components:common-util"
-
-    const val featureHomeProject = ":features:ds-home"
-
     const val lifecycleLiveDataKTX = "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
     const val lifecycleViewModelKTX = "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
     const val lifecycleExtensions  =  "android.arch.lifecycle:extensions:2.2.0"
 
     const val eventLine = "com.github.zhaozuyuan:eventline:1.0.3-release"
+
+    const val commonBaseProject = ":components:base"
+    const val commonNetProject = ":components:common-net"
+    const val commonUtilProject = ":components:common-util"
+
+    const val featureHomeProject = ":features:ds-home"
+    const val featureWeatherProject = ":features:ds-weather"
+
+    const val apiWeatherProject = ":components:api:api-weather"
 }
 
 fun DependencyHandlerScope.implRepo(variant: String) {
