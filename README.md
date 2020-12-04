@@ -21,7 +21,9 @@
 * **features**：业务module，里面可以新建和操作多个module，命名：ds-xxx格式   
     
 ## 代码使用     
-* **aarrun**：    
->- 在项目根目录下的gradle.properties中就可以看到怎么使用，默认aarrun是打开的；    
->- 如果觉得aarrun出现问题，可以使用`compile.openAarRun=false`关闭，并使用`includeProjects=all`依赖所有模块；     
->- 新建模块时，将build.gradle尾缀加一个kts，将其它业务模块的脚本复制过来就行；    
+#### aarrun     
+* 如果觉得aarrun出现问题，可以使用`includeProjects=all`依赖所有模块，这样就不会涉及aarrun；      
+* 新建模块时，将build.gradle尾缀加一个kts，将其它业务模块的脚本复制过来就行；   
+* 体验aarrun：   
+>- 1. 在`includeProjects=all`的情况下，使用`./gradlew assembleDebugForAar`命令将所有的module打aar包，可在`rootDir/aarrun`下查看；    
+>- 2. 此时就可以`includeProject=模块名字`，再sync now，在Android模式下你就会发现没有申明的模块都不见了；    

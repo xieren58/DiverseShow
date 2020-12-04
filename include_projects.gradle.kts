@@ -21,19 +21,30 @@ gradle.settingsEvaluated {
     file("$rootDir/gradle.properties")
         .readLines()
         .forEach find@ {
-            if (it.contains(includeProjectsName)) {
-                val targetStr = it
-                    .replace(" ", "")
-                    .replace("$includeProjectsName=", "")
-                handleIncludeProjects(settings, targetStr)
-                return@find
+            var findChar = false
+            it.forEach findChar@ { char ->
+                if (char != ' ') {
+                    if (char == '#') {
+                        findChar = true
+                    }
+                    return@findChar
+                }
             }
-            if(it.contains(outProjectsName)) {
-                val targetStr = it
-                    .replace(" ", "")
-                    .replace("$outProjectsName=", "")
-                handleOutProjects(settings, targetStr)
-                return@find
+            if (!findChar) {
+                if (it.contains(includeProjectsName)) {
+                    val targetStr = it
+                        .replace(" ", "")
+                        .replace("$includeProjectsName=", "")
+                    handleIncludeProjects(settings, targetStr)
+                    return@find
+                }
+                if (it.contains(outProjectsName)) {
+                    val targetStr = it
+                        .replace(" ", "")
+                        .replace("$outProjectsName=", "")
+                    handleOutProjects(settings, targetStr)
+                    return@find
+                }
             }
     }
 

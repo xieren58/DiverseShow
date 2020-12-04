@@ -14,7 +14,6 @@ object Dep {
 
     const val appcompat = "androidx.appcompat:appcompat:1.2.0"
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.0.4"
-
     const val googleMaterial = "com.google.android.material:material:1.2.1"
 
     const val junit = "junit:junit:4.+"
@@ -26,6 +25,13 @@ object Dep {
     const val lifecycleExtensions  =  "android.arch.lifecycle:extensions:2.2.0"
 
     const val eventLine = "com.github.zhaozuyuan:eventline:1.0.3-release"
+
+    const val rxAndroid3 = "io.reactivex.rxjava3:rxandroid:3.0.0"
+    const val rxjava3 = "io.reactivex.rxjava3:rxjava:3.0.8"
+    const val autoDispose2 = "com.uber.autodispose2:autodispose:2.0.0"
+
+    const val retrofit2 = "com.squareup.retrofit2:retrofit:2.9.0"
+    const val okHttp3 = "com.squareup.okhttp3:okhttp:4.9.0"
 
     const val commonBaseProject = ":components:base"
     const val commonNetProject = ":components:common-net"

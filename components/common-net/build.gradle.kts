@@ -38,4 +38,7 @@ dependencies {
     androidTestImpl(Dep.espressoCore)
 
     implProject(Dep.commonUtilProject)
+
+    implRepo(Dep.okHttp3)
+    implRepo(Dep.retrofit2)
 }

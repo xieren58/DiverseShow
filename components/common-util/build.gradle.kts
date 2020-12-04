@@ -40,4 +40,8 @@ dependencies {
     testImpl(Dep.junit)
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
+
+    implRepo(Dep.autoDispose2)
+    implRepo(Dep.rxAndroid3)
+    implRepo(Dep.rxjava3)
 }
