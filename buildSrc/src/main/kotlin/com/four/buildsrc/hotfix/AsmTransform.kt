@@ -47,7 +47,10 @@ abstract class AsmTransform: Transform() {
         val outputProvider: TransformOutputProvider? = transformInvocation.outputProvider
         val isIncremental = transformInvocation.isIncremental
 
-        outputProvider?.deleteAll()
+        if(!isIncremental) {
+            //非增量编译 删除之前的所有文件
+            outputProvider?.deleteAll()
+        }
 
         inputs?.forEach { input ->
             input.jarInputs.forEach { jarInput ->

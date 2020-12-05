@@ -29,5 +29,5 @@
 >- 2. 此时就可以`includeProject=模块名字`，再sync now，在Android模式下你就会发现没有申明的模块都不见了；
 
 #### Transform与字节码修改
-* 简单封装了一个使用ASM库的通用AsmTransform，支持增量编译
+* 简单封装了一个使用ASM库的通用AsmTransform，支持增量编译、并发编译
 * 使用AsmTransform实现字节码修改将自己的逻辑使用ClassVisitor注入即可
