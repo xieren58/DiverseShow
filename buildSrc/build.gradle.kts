@@ -18,4 +18,12 @@ repositories {
 dependencies {
     //gradle工具
     implementation("com.android.tools.build:gradle:4.1.1")
+
+    //ASM依赖
+    implementation("org.ow2.asm:asm:8.0")
+    implementation("org.ow2.asm:asm-util:8.0")
+    implementation ("org.ow2.asm:asm-commons:8.0")
+
+    //常用io操作
+    implementation("commons-io:commons-io:2.6")
 }

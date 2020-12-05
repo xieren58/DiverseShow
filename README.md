@@ -26,4 +26,8 @@
 * 新建模块时，将build.gradle尾缀加一个kts，将其它业务模块的脚本复制过来就行；   
 * 体验aarrun：   
 >- 1. 在`includeProjects=all`的情况下，使用`./gradlew assembleDebugForAar`命令将所有的module打aar包，可在`rootDir/aarrun`下查看；    
->- 2. 此时就可以`includeProject=模块名字`，再sync now，在Android模式下你就会发现没有申明的模块都不见了；    
+>- 2. 此时就可以`includeProject=模块名字`，再sync now，在Android模式下你就会发现没有申明的模块都不见了；
+
+#### Transform与字节码修改
+* 简单封装了一个使用ASM库的通用AsmTransform，支持增量编译
+* 使用AsmTransform实现字节码修改将自己的逻辑使用ClassVisitor注入即可
