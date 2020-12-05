@@ -42,6 +42,15 @@ allprojects {
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
         kotlinOptions.jvmTarget = com.four.buildsrc.Env.KOTLIN_JVM_TARGET
     }
+
+    this.afterEvaluate {
+        extensions.findByType(com.android.build.gradle.BaseExtension::class.java)?.apply {
+            compileOptions {
+                sourceCompatibility(JavaVersion.VERSION_1_8)
+                targetCompatibility(JavaVersion.VERSION_1_8)
+            }
+        }
+    }
 }
 
 tasks.create("clean") {

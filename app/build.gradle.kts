@@ -5,6 +5,8 @@ plugins {
     id ("kotlin-android")
 }
 
+//plugins.apply(com.four.buildsrc.hotfix.HotfixPlugin::class.java)
+
 android  {
     compileSdkVersion(Env.COMPILE_VERSION)
     buildToolsVersion("30.0.2")
