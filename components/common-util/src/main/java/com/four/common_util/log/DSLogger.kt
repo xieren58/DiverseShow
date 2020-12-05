@@ -5,7 +5,7 @@ import android.util.Log
 class DSLogger(
     var openLog: Boolean = true,
     var logLevel: LogLevel = LogLevel.DEBUG,
-    val name: String = "ds"
+    val name: String = "dslog"
 ) {
 
     init {

@@ -28,12 +28,13 @@ class LoggerManager : InvocationHandler {
             return fromMethodName
         } else {
             var targetAnnotation: Config? = null
-            method.annotations.forEach {
-                if (it.annotationClass == Config::class) {
-                    targetAnnotation = it as Config
+            method.annotations.forEach find@ {
+                if (it is Config) {
+                    targetAnnotation = it
+                    return@find
                 }
             }
-            targetAnnotation?.let {
+            if (targetAnnotation == null) {
                 Log.e("ds", "the ${method.name}() has no annotation which is Config::class ")
                 return defaultLogger
             }
