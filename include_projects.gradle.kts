@@ -18,35 +18,24 @@ gradle.settingsEvaluated {
     //这里我只能想到手解属性，似乎在settings.gradle下找不到properties
     val includeProjectsName = "includeProjects"
     val outProjectsName = "outProjects"
-    file("$rootDir/gradle.properties")
-        .readLines()
-        .forEach find@ {
-            var findChar = false
-            it.forEach findChar@ { char ->
-                if (char != ' ') {
-                    if (char == '#') {
-                        findChar = true
-                    }
-                    return@findChar
-                }
-            }
-            if (!findChar) {
-                if (it.contains(includeProjectsName)) {
-                    val targetStr = it
-                        .replace(" ", "")
-                        .replace("$includeProjectsName=", "")
-                    handleIncludeProjects(settings, targetStr)
-                    return@find
-                }
-                if (it.contains(outProjectsName)) {
-                    val targetStr = it
-                        .replace(" ", "")
-                        .replace("$outProjectsName=", "")
-                    handleOutProjects(settings, targetStr)
-                    return@find
-                }
-            }
+    val includeStr = extra.properties[includeProjectsName].toString()
+    val outStr = extra.properties[outProjectsName].toString()
+
+    if (includeStr.isNotEmpty()) {
+        val targetStr = includeStr
+            .replace(" ", "")
+        handleIncludeProjects(settings, targetStr)
+        return@settingsEvaluated
     }
+    if (outStr.isNotEmpty()) {
+        val targetStr = outStr
+            .replace(" ", "")
+            .replace("$outProjectsName=", "")
+        handleOutProjects(settings, targetStr)
+        return@settingsEvaluated
+    }
+
+
 
     println("finish include projects.")
 }
