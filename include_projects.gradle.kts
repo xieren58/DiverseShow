@@ -41,9 +41,7 @@ gradle.settingsEvaluated {
 }
 
 fun handleIncludeProjects(settings: Settings, str: String) {
-    if ("off" == str || str.isEmpty()) {
-        return
-    } else if ("all" == str) {
+    if ("all" == str) {
         allProjects.forEach {
             settings.include(it)
         }
@@ -59,12 +57,8 @@ fun handleIncludeProjects(settings: Settings, str: String) {
 }
 
 fun handleOutProjects(settings: Settings, str: String) {
-    if (str.isEmpty() || "all" == str) {
+    if ("all" == str) {
         return
-    } else if ("off" == str) {
-        allProjects.forEach {
-            settings.include(it)
-        }
     } else {
         val list = allProjects.toMutableList()
         str.split(",").forEach { target->
