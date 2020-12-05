@@ -3,13 +3,13 @@ package com.four.buildsrc.hotfix
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.ide.common.internal.WaitableExecutor
-import org.gradle.internal.impldep.org.apache.commons.io.FileUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import org.apache.commons.io.FileUtils
 
 abstract class AsmTransform: Transform() {
     companion object {
@@ -51,23 +51,33 @@ abstract class AsmTransform: Transform() {
             //非增量编译 删除之前的所有文件
             outputProvider?.deleteAll()
         }
-
+        println("inputs size: ${inputs?.size}")
         inputs?.forEach { input ->
             input.jarInputs.forEach { jarInput ->
-                //处理jar
-                mWaitableExecutor.execute {
-                    processJarInput(jarInput, outputProvider!!,isIncremental)
-                }
+                    try {
+                        //处理jar
+                        mWaitableExecutor.execute {
+                            processJarInput(jarInput, outputProvider!!, isIncremental)
+                            return@execute null
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
             }
 
             input.directoryInputs.forEach { directoryInput ->
-                //处理源码文件
-                mWaitableExecutor.execute {
-                    processDirectoryInput(directoryInput, outputProvider!!,isIncremental)
+                try {
+                    //处理源码文件
+                    mWaitableExecutor.execute {
+                        processDirectoryInput(directoryInput, outputProvider!!, isIncremental)
+                        return@execute null
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
-
         }
+        mWaitableExecutor.waitForTasksWithQuickFail<Any>(true)
     }
 
     private fun processDirectoryInput(directoryInput: DirectoryInput, outputProvider: TransformOutputProvider,isIncremental: Boolean) {
@@ -82,17 +92,11 @@ abstract class AsmTransform: Transform() {
                 val inputFile = changeFile.key
                 val destFilePath = inputFile.absolutePath.replace(srcPath,destPath)
                 val destFile = File(destFilePath)
-                when (status) {
-                    Status.NOTCHANGED -> return
-                    Status.CHANGED, Status.ADDED -> {
-                        FileUtils.touch(destFile)
-                        transformSingleFile(inputFile,destFile)
-                    }
-                    Status.REMOVED -> {
-                        if (destFile.exists()) {
-                            FileUtils.forceDelete(destFile)
-                        }
-                    }
+                if(status == Status.REMOVED && destFile.exists()) {
+                    FileUtils.forceDelete(destFile)
+                } else if (status == Status.CHANGED || status == Status.ADDED) {
+                    FileUtils.touch(destFile)
+                    transformSingleFile(inputFile,destFile)
                 }
             }
         } else {
@@ -103,20 +107,11 @@ abstract class AsmTransform: Transform() {
     private fun processJarInput(jarInput: JarInput, outputProvider: TransformOutputProvider,isIncremental: Boolean) {
         val dest = outputProvider.getContentLocation(jarInput.name,jarInput.contentTypes,jarInput.scopes,Format.JAR)
         if (isIncremental) {
-            when(jarInput.status) {
-                Status.NOTCHANGED -> {
-                    return
-                }
-
-                Status.ADDED,Status.CHANGED -> {
-                    FileUtils.copyFile(jarInput.file,dest)
-                }
-
-                Status.REMOVED -> {
-                    if (dest.exists()) {
-                        FileUtils.forceDelete(dest)
-                    }
-                }
+            val status = jarInput.status
+            if (status == Status.CHANGED || status == Status.ADDED) {
+                FileUtils.copyFile(jarInput.file,dest)
+            } else if (status == Status.REMOVED && dest.exists()) {
+                FileUtils.forceDelete(dest)
             }
         } else {
             FileUtils.copyFile(jarInput.file,dest)
@@ -164,7 +159,7 @@ abstract class AsmTransform: Transform() {
         fileList.forEach { inputFile ->
             println("替换前  file.absolutePath = ${inputFile.absolutePath}")
             val outputFullPath = inputFile.absolutePath.replace(inputFilePath, outputFilePath)
-            println("替换后  file.absolutePath = ${outputFullPath}")
+            println("替换后  file.absolutePath = $outputFullPath")
             val outputFile = File(outputFullPath)
             //创建文件
             FileUtils.touch(outputFile)
