@@ -27,7 +27,7 @@ abstract class AsmTransform: Transform() {
 
     override fun isIncremental(): Boolean {
         //是否增量编译
-        return true
+        return false
     }
 
     override fun getScopes(): MutableSet<in QualifiedContent.Scope> {
@@ -131,7 +131,7 @@ abstract class AsmTransform: Transform() {
 
             val classReader = ClassReader(inputStream)
             val classWriter = ClassWriter(ClassWriter.COMPUTE_MAXS)
-            classReader.accept(getClassVisitor(classWriter), ClassReader.EXPAND_FRAMES)
+            classReader.accept(HelloWorldClassVisitor(classWriter), ClassReader.EXPAND_FRAMES)
             outputStream.write(classWriter.toByteArray())
 
             inputStream.close()
