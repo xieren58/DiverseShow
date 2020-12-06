@@ -4,7 +4,6 @@ plugins {
     id("com.android.library")
     id("kotlin-android")
 }
-
 android  {
     compileSdkVersion(Env.COMPILE_VERSION)
     buildToolsVersion("30.0.2")
@@ -12,20 +11,19 @@ android  {
     defaultConfig {
         minSdkVersion(Env.MIN_SDK_VERSION)
         targetSdkVersion(Env.TARGET_SDK_VERSION)
-        versionCode(Env.VERSION_CODE)
-        versionName(Env.VERSION)
+        versionCode = Env.VERSION_CODE
+        versionName = Env.VERSION
 
-        testInstrumentationRunner("androidx.test.runner.AndroidJUnitRunner")
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         getAt("release").apply {
-            minifyEnabled(false)
+            isMinifyEnabled  = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 }
-
 dependencies {
 
     implRepo(Dep.kotlinStdlib)

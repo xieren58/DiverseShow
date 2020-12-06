@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     //gradle工具
-    implementation("com.android.tools.build:gradle:4.1.1")
+    implementation("com.android.tools.build:gradle:4.0.0")
 
     //ASM依赖
     implementation("org.ow2.asm:asm:8.0")
