@@ -9,6 +9,10 @@ plugins.apply(com.four.buildsrc.compile.AssembleDebugForAarPlugin::class.java)
 buildscript {
     val kotlinVersion by extra(com.four.buildsrc.Env.KOTLIN_VERSION)
     repositories {
+        maven(URI("http://maven.aliyun.com/repository/google"))
+        maven(URI("http://maven.aliyun.com/repository/jcenter"))
+        maven(URI("ttp://maven.aliyun.com/nexus/content/groups/public"))
+        maven(URI("http://maven.aliyun.com/nexus/content/repositories/gradle-plugin"))
         google()
         jcenter()
     }
@@ -25,6 +29,10 @@ allprojects {
     repositories {
         google()
         jcenter()
+        maven(URI("http://maven.aliyun.com/repository/google"))
+        maven(URI("http://maven.aliyun.com/repository/jcenter"))
+        maven(URI("ttp://maven.aliyun.com/nexus/content/groups/public"))
+        maven(URI("http://maven.aliyun.com/nexus/content/repositories/gradle-plugin"))
         maven(URI("https://jitpack.io"))
         flatDir {
             dirs(
