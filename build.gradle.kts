@@ -9,10 +9,10 @@ plugins.apply(com.four.buildsrc.compile.AssembleDebugForAarPlugin::class.java)
 buildscript {
     val kotlinVersion by extra(com.four.buildsrc.Env.KOTLIN_VERSION)
     repositories {
-        maven(URI("https://maven.aliyun.com/repository/google"))
-        maven(URI("https://maven.aliyun.com/repository/jcenter"))
-        maven(URI("https://maven.aliyun.com/nexus/content/groups/public"))
-        maven(URI("https://maven.aliyun.com/nexus/content/repositories/gradle-plugin"))
+        maven(url = "https://maven.aliyun.com/repository/google")
+        maven(url = "https://maven.aliyun.com/repository/jcenter")
+        maven(url = "https://maven.aliyun.com/nexus/content/groups/public")
+        maven(url = "https://maven.aliyun.com/nexus/content/repositories/gradle-plugin")
         google()
         jcenter()
     }
@@ -27,12 +27,12 @@ buildscript {
 
 allprojects {
     repositories {
+        maven(url = "https://maven.aliyun.com/repository/google")
+        maven(url = "https://maven.aliyun.com/repository/jcenter")
+        maven(url = "https://maven.aliyun.com/nexus/content/groups/public")
+        maven(url = "https://maven.aliyun.com/nexus/content/repositories/gradle-plugin")
         google()
         jcenter()
-        maven(URI("https://maven.aliyun.com/repository/google"))
-        maven(URI("https://maven.aliyun.com/repository/jcenter"))
-        maven(URI("https://maven.aliyun.com/nexus/content/groups/public"))
-        maven(URI("https://maven.aliyun.com/nexus/content/repositories/gradle-plugin"))
         maven(URI("https://jitpack.io"))
         flatDir {
             dirs(
