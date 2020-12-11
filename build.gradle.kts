@@ -31,9 +31,10 @@ allprojects {
         maven(url = "https://maven.aliyun.com/repository/jcenter")
         maven(url = "https://maven.aliyun.com/nexus/content/groups/public")
         maven(url = "https://maven.aliyun.com/nexus/content/repositories/gradle-plugin")
+        maven(url = "https://oss.jfrog.org/libs-snapshot")
+        maven(url = "https://jitpack.io")
         google()
         jcenter()
-        maven(URI("https://jitpack.io"))
         flatDir {
             dirs(
                 "${project.rootDir}/aarrun/aars/"

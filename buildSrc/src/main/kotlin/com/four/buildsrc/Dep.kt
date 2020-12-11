@@ -1,7 +1,7 @@
 package com.four.buildsrc
 
 import org.gradle.kotlin.dsl.DependencyHandlerScope
-import com.four.buildsrc.compile.DepInterceptor
+import com.four.buildsrc.compile.intercept.DepInterceptor
 import org.gradle.kotlin.dsl.accessors.runtime.addExternalModuleDependencyTo
 
 /**
@@ -26,11 +26,15 @@ object Dep {
 
     const val eventLine = "com.github.zhaozuyuan:eventline:1.0.3-release"
 
-    const val rxAndroid3 = "io.reactivex.rxjava3:rxandroid:3.0.0"
-    const val rxjava3 = "io.reactivex.rxjava3:rxjava:3.0.8"
-    const val autoDispose2 = "com.uber.autodispose2:autodispose:2.0.0"
+    const val rxAndroid2 = "io.reactivex.rxjava2:rxandroid:2.1.1"
+    const val rxjava2 = "io.reactivex.rxjava2:rxjava:2.1.1"
+    const val autoDisposeAndroid = "com.uber.autodispose:autodispose-android-archcomponents:1.4.0"
 
     const val retrofit2 = "com.squareup.retrofit2:retrofit:2.9.0"
+    const val retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava:2.9.0"
+    const val retrofitGson = "com.squareup.retrofit2:converter-gson:2.1.0"
+
+    const val gson = "com.google.code.gson:gson:2.8.1"
     const val okHttp3 = "com.squareup.okhttp3:okhttp:4.9.0"
 
     const val commonBaseProject = ":components:base"
@@ -72,5 +76,17 @@ fun DependencyHandlerScope.testImpl(variant: String) {
 fun DependencyHandlerScope.androidTestImpl(variant: String) {
     if (!DepInterceptor.interceptAndroidTestImpl(this, variant)) {
         dependencies.add("androidTestImplementation", variant)
+    }
+}
+
+fun DependencyHandlerScope.apiRepo(variant: String) {
+    if (!DepInterceptor.interceptImplRepo(this, variant)) {
+        dependencies.add("api", variant)
+    }
+}
+
+fun DependencyHandlerScope.apiProject(path: String) {
+    if (!DepInterceptor.interceptImplProject(this, path)) {
+        dependencies.add("api", project(mapOf("path" to path)))
     }
 }

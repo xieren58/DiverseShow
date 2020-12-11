@@ -1,14 +1,24 @@
 package com.four.buildsrc.compile.json
+import com.google.gson.annotations.SerializedName
 
-data class DepBean(val impls: List<Data>,
-                   val testImpls: List<Data>,
-                   val androidTestImpls: List<Data>
-                   ) {
+data class DepBean(@SerializedName("impl_list")
+                   var implList: List<Data> = emptyList(),
 
-    data class Data(val group: String,
-                    val name: String,
-                    val version: String,
-                    val ext: String,
-                    val projectPath: String? = null
+                   @SerializedName("test_impl_list")
+                   var testImplList: List<Data> = emptyList(),
+
+                   @SerializedName("android_test_impl_list")
+                   var androidTestImplList: List<Data> = emptyList(),
+
+                   @SerializedName("api_list")
+                   var apiList: List<Data> = emptyList()) {
+
+    data class Data(var group: String = "",
+                    var name: String = "",
+                    var version: String = "",
+                    var ext: String = "",
+
+                    @SerializedName("project_path")
+                    var projectPath: String? = null
     )
 }

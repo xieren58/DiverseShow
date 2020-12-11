@@ -26,4 +26,6 @@ dependencies {
 
     //常用io操作
     implementation("commons-io:commons-io:2.6")
+
+    implementation("com.google.code.gson:gson:2.8.1")
 }

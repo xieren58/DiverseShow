@@ -39,6 +39,8 @@ dependencies {
 
     implProject(Dep.commonUtilProject)
 
-    implRepo(Dep.okHttp3)
-    implRepo(Dep.retrofit2)
+    apiRepo(Dep.okHttp3)
+    apiRepo(Dep.retrofit2)
+    implRepo(Dep.retrofitRxJava)
+    implRepo(Dep.retrofitGson)
 }

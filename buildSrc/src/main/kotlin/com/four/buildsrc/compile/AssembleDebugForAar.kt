@@ -1,14 +1,13 @@
 package com.four.buildsrc.compile
 
 import com.android.build.gradle.internal.plugins.AppPlugin
-import com.four.buildsrc.compile.json.DepConstant
+import com.four.buildsrc.compile.json.*
 import com.four.buildsrc.util.*
+import com.google.gson.Gson
 import org.gradle.api.DefaultTask
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.tasks.TaskAction
-import org.json.JSONArray
-import org.json.JSONObject
 import java.io.File
 
 /**
@@ -23,6 +22,8 @@ open class AssembleDebugForAar : DefaultTask() {
         const val BUILD_AAR_DIR = "/aarrun/aars"
 
         const val BUILD_JSON_DIR = "/aarrun/jsons"
+
+        val JSON_HELPER = Gson()
     }
 
     init {
@@ -58,64 +59,55 @@ open class AssembleDebugForAar : DefaultTask() {
         //将aar copy到/aar_build
         FileUtil.copyFileByOverlay(aarPath, copyAarPath)
 
-        val target = JSONObject()
-        //扫描implementation
-        target.put(
-            DepConstant.IMPLEMENTATION_NAME,
-            createJSONObjects("implementation"))
-        //扫描testImplementation
-        target.put(
-            DepConstant.TEST_IMPLEMENTATION_NAME,
-            createJSONObjects("testImplementation"))
-        //扫描androidTestImplementation
-        target.put(
-            DepConstant.ANDROID_TEST_IMPLEETATION_NAME,
-            createJSONObjects("androidTestImplementation"))
+        val target = DepBean()
+        target.apiList = createJSONObjects(DepConstant.Type.API)
+        target.implList = createJSONObjects(DepConstant.Type.IMPLEMENTATION)
+        target.testImplList = createJSONObjects(DepConstant.Type.TEST_IMPLEMENTATION)
+        target.androidTestImplList = createJSONObjects(DepConstant.Type.ANDROID_TEST_IMPLEMENTATION)
+
         //写入json
-        FileUtil.writeStringByOverlay(depJsonPath, target.toString())
+        FileUtil.writeStringByOverlay(depJsonPath, JSON_HELPER.toJson(target))
     }
 
-    private fun createJSONObjects(configName: String): JSONArray {
-        val implArray = JSONArray()
+    private fun createJSONObjects(configName: String): List<DepBean.Data> {
+        val dataList = mutableListOf<DepBean.Data>()
         project.configurations.asMap[configName]?.allDependencies?.apply {
-            var index = 0
             forEach {
-                val depObj = JSONObject(this.size)
-                depObj.put(DepConstant.DEP_GROUP, it.group ?: "")
-                depObj.put(DepConstant.DEP_NAME, it.name)
+                val data = DepBean.Data()
+                data.group = it.group ?: ""
+                data.name = it.name
                 if (it.version.isNullOrEmpty() || it.version == "unspecified") {
-                    depObj.put(DepConstant.DEP_VERSION, DepConstant.Default.VERSION)
+                    data.version = DepConstant.Default.VERSION
                 } else {
-                    depObj.put(DepConstant.DEP_VERSION, it.version)
+                    data.version = it.version!!
                 }
 
                 //暂时只考虑了aar project jar repo依赖的情况
                 //aar 的版本只为1.0
                 when (it) {
                     is DefaultProjectDependency -> {
-                        depObj.put(DepConstant.DEP_GROUP, DepConstant.Default.GROUP)
-                        depObj.put(DepConstant.DEP_EXT, DepConstant.Ext.PROJECT)
-                        depObj.put(DepConstant.DEP_PROJECT_PATH, it.dependencyProject.path)
+                        data.group = DepConstant.Default.GROUP
+                        data.ext =  DepConstant.Ext.PROJECT
+                        data.projectPath =  it.dependencyProject.path
+                            ?: throw NullPointerException("project path is null")
                     }
                     is DefaultExternalModuleDependency -> {
                         if (it.artifacts.size != 0)  {
                             it.artifacts.forEach out@ { art ->
-                                depObj.put(DepConstant.DEP_EXT, art.type)
+                                data.ext =  art.type
                                 return@out
                             }
                         } else {
-                            depObj.put(DepConstant.DEP_EXT, DepConstant.Ext.REPO)
+                            data.ext = DepConstant.Ext.REPO
                         }
-                        depObj.put(DepConstant.DEP_PROJECT_PATH, "")
                     }
                     else -> {
-                        depObj.put(DepConstant.DEP_EXT, DepConstant.Ext.REPO)
-                        depObj.put(DepConstant.DEP_PROJECT_PATH, "")
+                        data.ext = DepConstant.Ext.REPO
                     }
                 }
-                implArray.put(index++, depObj)
+                dataList.add(data)
             }
         }
-        return implArray
+        return dataList
     }
 }
