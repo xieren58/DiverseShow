@@ -16,6 +16,8 @@ repositories {
 }
 
 dependencies {
+    api(gradleApi())
+    api(localGroovy())
     //gradle工具
     implementation("com.android.tools.build:gradle:4.1.1")
 
