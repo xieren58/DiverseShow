@@ -12,7 +12,14 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/buildSrc" />
+            <option value="$PROJECT_DIR$/components" />
+            <option value="$PROJECT_DIR$/components/api" />
+            <option value="$PROJECT_DIR$/components/api/api-weather" />
+            <option value="$PROJECT_DIR$/components/base" />
+            <option value="$PROJECT_DIR$/components/common-net" />
+            <option value="$PROJECT_DIR$/components/common-util" />
             <option value="$PROJECT_DIR$/features" />
+            <option value="$PROJECT_DIR$/features/ds-home" />
             <option value="$PROJECT_DIR$/features/ds-weather" />
           </set>
         </option>

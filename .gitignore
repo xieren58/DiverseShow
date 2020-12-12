@@ -10,7 +10,6 @@
 /.idea/assetWizardSettings.xml
 .DS_Store
 /build
-/aarrun
 /captures
 .externalNativeBuild
 .cxx

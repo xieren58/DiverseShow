@@ -30,7 +30,7 @@ class HttpLogInterceptor : Interceptor {
         val request = chain.request()
         val logBuilder = StringBuilder()
 
-        logBuilder.append("------> net intercept, client\n")
+        logBuilder.append("\n------> net intercept, client\n")
 
         logBuilder.append(request.method).append(space).append(request.url).append("\n")
         request.headers.forEach {
@@ -66,39 +66,45 @@ class HttpLogInterceptor : Interceptor {
         //事件交给下一个拦截器
         val response = chain.proceed(newReq.build())
 
-        logBuilder.clear()
-        logBuilder.append("------> net intercept, server\n")
-
-        logBuilder.append(response.protocol).append(space).append(response.message).append(space)
-            .append(response.code).append(space).append(response.request.url).append("\n")
-        response.headers.forEach {
-            logBuilder.append(it.first).append(": ").append(it.second)
-        }
-        bodyStr = null
-        if (response.isSuccessful && response.body != null) {
-            response.body?.let {
-                logBuilder.append(it.contentType()).append(space).append(it.contentLength()).append("\n")
-                if (it.contentLength() > BODY_READER_MAX) {
-                    logBuilder.append("cannot read more than 4 * 1024 byte.")
-                } else {
-                    //因为下面toRequestBody默认是utf-8
-                    bodyStr = String(it.bytes(), StandardCharsets.UTF_8)
-                    logBuilder.append(bodyStr).append("\n")
-                }
-            }
-        }
-
-        return Response.Builder()
-            .code(response.code)
-            .headers(response.headers)
-            .body(bodyStr?.toResponseBody(response.body?.contentType()) ?: response.body)
-            .cacheResponse(response.cacheResponse)
-            .message(response.message)
-            .handshake(response.handshake)
-            .networkResponse(response.networkResponse)
-            .cacheResponse(response.cacheResponse)
-            .priorResponse(response.priorResponse)
-            .sentRequestAtMillis(response.sentRequestAtMillis)
-            .build()
+        return response
+//        logBuilder.clear()
+//        logBuilder.append("\n------> net intercept, server\n")
+//
+//        logBuilder.append(response.protocol).append(space).append(response.message).append(space)
+//            .append(response.code).append(space).append(response.request.url).append("\n")
+//        response.headers.forEach {
+//            logBuilder.append(it.first).append(": ").append(it.second).append("\n")
+//        }
+//
+//        var bodyBytes: ByteArray? = null
+//        if (response.isSuccessful && response.body != null) {
+//            response.body?.let {
+//                logBuilder.append(it.contentType()).append(space).append(it.contentLength()).append("\n")
+//                if (it.contentLength() > BODY_READER_MAX) {
+//                    logBuilder.append("cannot read more than 4 * 1024 byte.")
+//                } else {
+//                    //因为下面toRequestBody默认是utf-8
+//                    bodyBytes = it.bytes()
+//                    bodyStr = String(bodyBytes!!, StandardCharsets.UTF_8)
+//                    logBuilder.append(bodyStr).append("\n")
+//                }
+//            }
+//        }
+//
+//        logBuilder.append("<------ net intercept end, server\n")
+//        DSLog.net().debug(logBuilder.toString())
+//
+//        return Response.Builder()
+//            .code(response.code)
+//            .headers(response.headers)
+//            .body(bodyBytes?.toResponseBody(response.body?.contentType()))
+//            .cacheResponse(response.cacheResponse)
+//            .message(response.message)
+//            .handshake(response.handshake)
+//            .networkResponse(response.networkResponse)
+//            .cacheResponse(response.cacheResponse)
+//            .priorResponse(response.priorResponse)
+//            .sentRequestAtMillis(response.sentRequestAtMillis)
+//            .build()
     }
 }

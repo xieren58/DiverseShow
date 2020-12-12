@@ -41,6 +41,6 @@ dependencies {
 
     apiRepo(Dep.okHttp3)
     apiRepo(Dep.retrofit2)
-    implRepo(Dep.retrofitRxJava)
+    implRepo(Dep.retrofitRxJava2)
     implRepo(Dep.retrofitGson)
 }

@@ -5,6 +5,7 @@ import com.android.build.gradle.internal.plugins.LibraryPlugin
 import com.four.buildsrc.compile.intercept.DepInterceptHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import com.four.buildsrc.PluginSwitch
 
 /**
  * 为每个project添加task
@@ -22,13 +23,8 @@ class AssembleDebugForAarPlugin : Plugin<Project> {
             DepInterceptHelper.rootProject = DepInterceptHelper.rootProject ?: findRootProject(target)
         }
 
-        DepInterceptHelper.openAarRun = try {
-            val run = target.properties[OPEN_AAR_RUN_PROPERTY].toString().toBoolean()
-            println("aar run $run")
-            run
-        } catch (e: Exception) {
-            false
-        }
+        DepInterceptHelper.openAarRun = PluginSwitch.AarRun.isOpenAarRun(target)
+        println("aar run ${DepInterceptHelper.openAarRun}")
 
         target.afterEvaluate {
             val rootProject = findRootProject(target)
@@ -45,7 +41,6 @@ class AssembleDebugForAarPlugin : Plugin<Project> {
                 addTaskToSubObject(target)
             }
         }
-
     }
 
     private fun findRootProject(project: Project): Project {

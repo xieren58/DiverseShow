@@ -3,49 +3,27 @@ package com.four.ds_weather
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.animation.AlphaAnimation
-import android.view.animation.Animation
-import com.four.base.zy.BaseController
-import com.four.base.zy.activity.BaseControllerActivity
+import com.four.base.zy.activity.BaseModelActivity
 import kotlinx.android.synthetic.main.activity_weather.*
 
-class WeatherActivity : BaseControllerActivity<BaseController<*>>() {
+class WeatherActivity : BaseModelActivity<WeatherModel>() {
 
-    override fun createController(): BaseController<*>? = null
 
     override fun getLayoutId(): Int = R.layout.activity_weather
 
     override fun hideActionBar(): Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        test()
-        val a = createAnimOfShow(abcd)
-        ass!!.setOnClickListener {
-            abcd.visibility = View.VISIBLE
-            abcd.startAnimation(a)
+    override fun bindView() {
+
+    }
+
+    override fun initData() {
+        btnRequest.setOnClickListener {
+            viewModel?.requestWeekWeather(lifecycle)
         }
-
-        val intent = Intent()
-    }
-
-    fun test() {
-        Log.e("asm","WeatherActivity onCreate")
     }
 }
 
-private fun createAnimOfShow(view: View): Animation? {
-    //panel 动画300ms
-
-    //panel 动画300ms
-    val animation: Animation = AlphaAnimation(0f, 1f)
-    animation.duration = 300
-    animation.startOffset = 2000
-    return animation
-
-   // return defaultAnim
-}
 
 //https://weatherweek.api.bdymkt.com/week
 /*

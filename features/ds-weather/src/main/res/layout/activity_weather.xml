@@ -7,19 +7,11 @@
     tools:context=".WeatherActivity">
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/abcd"
+        android:id="@+id/btnRequest"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:background="#000000"
         android:layout_gravity="center"
-        android:visibility="gone"
         />
-
-    <TextView
-        android:id="@+id/ass"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="#ff2a2a22"
-        android:text="点击"/>
 
 </FrameLayout>

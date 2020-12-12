@@ -3,7 +3,7 @@ package com.four.common_net.util
 import com.four.common_net.interceptors.InterceptorFactory
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
@@ -22,10 +22,10 @@ object ClientUtil {
         .readTimeout(READ_TIME_OUT, TimeUnit.SECONDS)
         .writeTimeout(WRITE_TIME_OUT, TimeUnit.SECONDS)
 
-    fun <T> createNewClientBuilder(baseUrl: String) = Retrofit.Builder()
+    fun createNewClientBuilder(baseUrl: String) = Retrofit.Builder()
         .client(createNewOkClientBuilder().build())
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
-        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
 
 }

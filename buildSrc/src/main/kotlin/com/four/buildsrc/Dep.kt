@@ -31,7 +31,7 @@ object Dep {
     const val autoDisposeAndroid = "com.uber.autodispose:autodispose-android-archcomponents:1.4.0"
 
     const val retrofit2 = "com.squareup.retrofit2:retrofit:2.9.0"
-    const val retrofitRxJava = "com.squareup.retrofit2:adapter-rxjava:2.9.0"
+    const val retrofitRxJava2 = "com.squareup.retrofit2:adapter-rxjava2:2.9.0"
     const val retrofitGson = "com.squareup.retrofit2:converter-gson:2.1.0"
 
     const val gson = "com.google.code.gson:gson:2.8.1"
