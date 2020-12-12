@@ -59,6 +59,13 @@ abstract class BaseTransform() : Transform() {
         val isIncremental = transformInvocation.isIncremental
 
         transformInvocation.inputs.forEach { input ->
+            input.directoryInputs.forEach { directoryInput ->
+                //处理源码文件
+                mWaitableExecutor.execute {
+                    processDirectoryInput(directoryInput, transformOutputProvider,isIncremental)
+                }
+            }
+
             input.jarInputs.forEach { jarInput ->
                 //处理jar
                 mWaitableExecutor.execute {
@@ -66,16 +73,10 @@ abstract class BaseTransform() : Transform() {
                 }
             }
 
-            input.directoryInputs.forEach { directoryInput ->
-                //处理源码文件
-                mWaitableExecutor.execute {
-                    processDirectoryInput(directoryInput, transformOutputProvider,isIncremental)
-                }
-            }
         }
         mWaitableExecutor.waitForTasksWithQuickFail<Any>(true)
         val currTime = System.currentTimeMillis()
-        println("-----------------$name 执行耗时为 ${(currTime - startTime) / 1000} s--------------------")
+        println("-----------------$name 执行耗时为 ${(currTime - startTime) / 1000.00} s--------------------")
     }
 
     private fun processDirectoryInput(directoryInput: DirectoryInput, outputProvider: TransformOutputProvider,isIncremental: Boolean) {
@@ -98,7 +99,6 @@ abstract class BaseTransform() : Transform() {
                         FileUtils.touch(destFile)
                         //单个单个地复制文件
                         transformSingleFile(inputFile, destFile)
-                        FileUtils.copyFile(inputFile,destFile)
                     }
                     Status.REMOVED -> {
                         if (destFile.exists()) {
@@ -113,29 +113,21 @@ abstract class BaseTransform() : Transform() {
     }
 
     private fun transformDirectory(directoryInput: DirectoryInput,dest: File) {
-        if (dest.exists()) {
-            FileUtils.forceDelete(dest)
-        }
-        FileUtils.forceMkdir(dest)
         val extensions = arrayOf("class")
         //递归地去获取该文件夹下面所有的文件
         val fileList = FileUtils.listFiles(directoryInput.file,extensions,true)
         val outputFilePath = dest.absolutePath
         val inputFilePath = directoryInput.file.absolutePath
         fileList.forEach { inputFile ->
-            println("inputFile name == ${inputFile.name}")
+            println("替换前  file.absolutePath = ${inputFile.absolutePath}")
             val outputFullPath = inputFile.absolutePath.replace(inputFilePath, outputFilePath)
+            println("替换后  file.absolutePath = ${outputFullPath}")
             val outputFile = File(outputFullPath)
-            if (inputFile.isDirectory) {
-                transformDirectory(inputFile as DirectoryInput,outputFile)
-            } else {
-                //创建文件
-                FileUtils.touch(outputFile)
-                //单个单个地复制文件
-                transformSingleFile(inputFile, outputFile)
-            }
+            //创建文件
+            FileUtils.touch(outputFile)
+            //单个单个地复制文件
+            transformSingleFile(inputFile, outputFile)
         }
-        FileUtils.copyDirectory(directoryInput.file,dest)
     }
 
     private fun processJarInput(jarInput: JarInput, outputProvider: TransformOutputProvider,isIncremental: Boolean) {
@@ -162,23 +154,11 @@ abstract class BaseTransform() : Transform() {
     }
 
     private fun transformJar(jarInput: JarInput, dest: File) {
-        val path = jarInput.file.absolutePath
-        //临时文件存放正在操作中的文件
-        val tempFile = File(jarInput.file.parent + File.separator + "classes_temp.jar")
-        //之前的缓存存在避免重复插桩
-        if (tempFile.exists()) {
-            tempFile.delete()
-        }
-        if(path.endsWith(".jar") && !path.startsWith("androidx")) {
-            var jarName = jarInput.name
-            val md5Name = DigestUtils.md5Hex(jarInput.file.absolutePath)
-            if (jarName.endsWith(".jar")) {
-                jarName = jarName.substring(0, jarName.length - 4)
-            }
+        if(isJarInputNeedTrace(jarInput.file.name)) {
             val jarFile = JarFile(jarInput.file)
             val jarFileEntries = jarFile.entries()
 
-            val jarOutputStream = JarOutputStream(FileOutputStream(tempFile))
+            val jarOutputStream = JarOutputStream(FileOutputStream(dest))
 
             while (jarFileEntries.hasMoreElements()) {
                 val jarEntry = jarFileEntries.nextElement()
@@ -189,7 +169,6 @@ abstract class BaseTransform() : Transform() {
 
                 if (isNeedTraceClass(entryName)) {
                     //执行插桩
-                    println("----------- deal with \"jar\" class file <' + entryName + '> -----------")
                     jarOutputStream.putNextEntry(zipEntry)
                     val classReader = ClassReader(IOUtils.toByteArray(inputStream))
                     val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
@@ -203,9 +182,16 @@ abstract class BaseTransform() : Transform() {
             }
             jarOutputStream.close()
             jarFile.close()
+        } else {
+            println("${jarInput.file.name} 不处理")
+            FileUtils.copyFile(jarInput.file,dest)
         }
-        FileUtils.copyFile(tempFile, dest)
-        tempFile.delete()
+
+    }
+
+    //用于筛选jar处理的范围 这里目前只处理多模块下的java/kotlin文件生成的jar
+    protected open fun isJarInputNeedTrace(fileName: String): Boolean {
+        return fileName.equals("classes.jar")
     }
 
     private fun transformSingleFile(inputFile: File, destFile: File) {
@@ -217,6 +203,31 @@ abstract class BaseTransform() : Transform() {
         }
     }
 
+    protected open fun isNeedTraceClass(name: String):Boolean {
+        println("输入文件为：$name")
+        if (name.startsWith("androidx/")
+            || name.startsWith("android/")
+            || name.startsWith("kotlin/")
+            || name.startsWith("io/reactivex")
+            || name.startsWith("com/google")
+            || name.startsWith("com/squareup")) {
+            return false
+        }
+        var newName = name
+        if (name.contains('/')) {
+            val index = name.lastIndexOf('/') + 1
+            if (index+1 >= name.length) {
+                return false
+            }
+            newName = name.substring(index)
+        }
+        return newName.endsWith(".class") &&
+                !(newName.startsWith("R$")
+                        || newName.startsWith("R.")
+                        || newName.contains('$')
+                        || newName.equals("BuildConfig.class"))
+    }
+
     private fun traceFile(inputStream: FileInputStream, outputStream:FileOutputStream) {
 
         val classReader = ClassReader(inputStream)
@@ -226,12 +237,5 @@ abstract class BaseTransform() : Transform() {
 
         inputStream.close()
         outputStream.close()
-    }
-
-    private fun isNeedTraceClass(name: String):Boolean {
-        val result = name.endsWith(".class") &&
-                !(name.startsWith("R$") || name.startsWith("R.") || name.startsWith("androidx/"))
-        println("输入文件为：$name,isNeedTraceClass: $result")
-        return result
     }
 }

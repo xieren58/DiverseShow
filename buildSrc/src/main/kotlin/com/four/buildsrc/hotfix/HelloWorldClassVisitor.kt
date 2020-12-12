@@ -28,13 +28,10 @@ class HelloWorldClassVisitor(private val classWriter: ClassWriter): ClassVisitor
         override fun onMethodEnter() {
             super.onMethodEnter()
             println("-----------------HelloWorldClassVisitor onMethodEnter----------------")
-/*            mv.visitFieldInsn(GETSTATIC,"java/lang/System","out","Ljava/io/PrintStream;")
-            mv.visitLdcInsn("Hello world!")
-            mv.visitMethodInsn(INVOKEVIRTUAL,"java/io/PrintStream","println","(Ljava/lang/String;)V",false)*/
             mv.visitLdcInsn("as")
             mv.visitLdcInsn("hello world!")
             mv.visitMethodInsn(INVOKESTATIC, "android/util/Log", "e", "(Ljava/lang/String;Ljava/lang/String;)I", false)
-            mv.visitInsn(Opcodes.POP)
+            //mv.visitInsn(Opcodes.POP)
         }
 
     }
