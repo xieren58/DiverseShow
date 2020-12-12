@@ -37,6 +37,12 @@ abstract class BaseTransform() : Transform() {
 
     override fun getScopes(): MutableSet<in QualifiedContent.Scope> {
         //作用范围
+        if (isLibraryModule) {
+            return HashSet<QualifiedContent.Scope>().apply {
+                this.add(QualifiedContent.Scope.PROJECT)
+                this.add(QualifiedContent.Scope.EXTERNAL_LIBRARIES)
+            }
+        }
         return TransformManager.SCOPE_FULL_PROJECT
     }
 
