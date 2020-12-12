@@ -16,8 +16,9 @@
 * **components**：组件module，公共层Module，包括： 
 >- base: 基础框架封装；    
 >- common：公共层封装，例如 util、widget等，命名：common-util等；    
->- api层：其它业务module的api，命名：api-feature等；    
-    ....    
+>- api层：其它业务module的api，命名：api-feature等；     
+    
+* **android-skill**：用于热修、插件化、小程序等技术实现的module；    
     
 * **features**：业务module，里面可以新建和操作多个module，命名：ds-xxx格式   
     

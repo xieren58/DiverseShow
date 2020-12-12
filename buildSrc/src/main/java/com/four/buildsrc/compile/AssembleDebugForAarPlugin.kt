@@ -14,10 +14,6 @@ import com.four.buildsrc.PluginSwitch
  */
 class AssembleDebugForAarPlugin : Plugin<Project> {
 
-    companion object {
-        const val OPEN_AAR_RUN_PROPERTY = "compile.openAarRun"
-    }
-
     override fun apply(target: Project) {
         target.gradle.beforeProject {
             DepInterceptHelper.rootProject = DepInterceptHelper.rootProject ?: findRootProject(target)

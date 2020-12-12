@@ -43,8 +43,9 @@ object Dep {
 
     const val featureHomeProject = ":features:ds-home"
     const val featureWeatherProject = ":features:ds-weather"
-
     const val apiWeatherProject = ":components:api:api-weather"
+
+    const val skillHotfixProject = ":android-skill:hotfix"
 }
 
 fun DependencyHandlerScope.implRepo(variant: String) {

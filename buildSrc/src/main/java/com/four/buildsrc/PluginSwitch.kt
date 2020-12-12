@@ -28,6 +28,18 @@ object PluginSwitch {
         //项目引入哪些module，例如 app,common-util
         private const val INCLUDE_PROJECTS = "run.projects"
 
+        @JvmStatic
         fun isOpenAarRun(project : Project) = PropertiesUtil.getBooleanProperty(COMPILE_AAR_RUN, false, project)
+    }
+
+    /**
+     * 热修
+     */
+    object Hotfix {
+
+        private const val OPEN_HOTFIX = "hotfix.open"
+
+        @JvmStatic
+        fun isOpenHotfix(project: Project) = PropertiesUtil.getBooleanProperty(OPEN_HOTFIX, false, project)
     }
 }

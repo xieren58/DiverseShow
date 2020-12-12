@@ -18,6 +18,7 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
+import com.four.buildsrc.PluginSwitch
 
 import static org.objectweb.asm.ClassReader.EXPAND_FRAMES
 
@@ -25,6 +26,9 @@ public class LifePlugin extends Transform implements Plugin<Project> {
 
     @Override
     void apply(Project project) {
+        if (!PluginSwitch.Hotfix.isOpenHotfix(project)) {
+            return
+        }
         //registerTransform
         def android = project.extensions.getByType(AppExtension)
         android.registerTransform(this)

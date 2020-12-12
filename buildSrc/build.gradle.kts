@@ -3,7 +3,7 @@ plugins {
 }
 
 //定义资源目录
-val javaSourcePath = "src/main/kotlin"
+val javaSourcePath = "src/main/java"
 sourceSets.main.get().java.srcDir(javaSourcePath)
 
 repositories {

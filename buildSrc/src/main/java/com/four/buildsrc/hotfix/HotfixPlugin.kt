@@ -1,6 +1,5 @@
 package com.four.buildsrc.hotfix
 
-import com.android.build.api.transform.TransformInvocation
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
@@ -10,9 +9,13 @@ import org.gradle.api.Project
 import org.gradle.api.UnknownDomainObjectException
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
+import com.four.buildsrc.PluginSwitch
 
 class HotfixPlugin: BaseTransform(),Plugin<Project> {
     override fun apply(target: Project) {
+        if (!PluginSwitch.Hotfix.isOpenHotfix(target)) {
+            return
+        }
         Logger.log("-----------------$name apply--------------------")
         //register transform
         var extension: BaseExtension? = null

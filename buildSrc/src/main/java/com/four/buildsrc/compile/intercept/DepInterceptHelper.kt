@@ -14,7 +14,7 @@ object DepInterceptHelper {
     // 需要初始化
     var rootProject: Project? = null
 
-    var openAarRun = true
+    var openAarRun = false
 
     private val gson = Gson()
 
@@ -28,8 +28,6 @@ object DepInterceptHelper {
         val buildJsonPath = "${rootProject!!.rootDir}${AssembleDebugForAar.BUILD_JSON_DIR}"
         val aarPath = "$buildAarPath/${getFileName(name)}.aar"
         val depJsonPath = "$buildJsonPath/${getFileName(name)}.json"
-
-        println("dep json dir: $depJsonPath")
 
         val aarFile = File(aarPath)
         val jsonFile = File(depJsonPath)
