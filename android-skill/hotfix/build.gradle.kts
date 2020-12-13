@@ -39,7 +39,6 @@ dependencies {
     implRepo(Dep.appcompat)
     implRepo(Dep.googleMaterial)
     implRepo(Dep.constraintLayout)
-    testImpl(Dep.junit)
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
 }

@@ -37,7 +37,22 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
     }
 
     override fun getClassVisitor(classWriter: ClassWriter): ClassVisitor {
-        return HelloWorldClassVisitor(classWriter)
+        return HotfixClassVisitor(classWriter)
+    }
+
+    override fun isNeedTraceClass(name: String): Boolean {
+        var newName = name
+        if (name.contains('/')) {
+            val index = name.lastIndexOf('/') + 1
+            if (index+1 >= name.length) {
+                return false
+            }
+            newName = name.substring(index)
+        }
+        if (newName.equals("BuildConfig.class") || newName.equals("FixTest.class")) {
+            return true
+        }
+        return false
     }
 
 }

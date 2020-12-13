@@ -58,8 +58,8 @@ abstract class BaseTransform() : Transform() {
     }
 
     override fun transform(transformInvocation: TransformInvocation) {
-        super.transform(transformInvocation)
         println("-----------------$name start--------------------")
+        super.transform(transformInvocation)
         val startTime = System.currentTimeMillis()
         val transformOutputProvider = transformInvocation.outputProvider
         val isIncremental = transformInvocation.isIncremental
@@ -98,9 +98,6 @@ abstract class BaseTransform() : Transform() {
                 val destFilePath = inputFile.absolutePath.replace(srcPath,destPath)
                 val destFile = File(destFilePath)
                 when (status) {
-                    Status.NOTCHANGED -> {
-
-                    }
                     Status.CHANGED,Status.ADDED -> {
                         FileUtils.touch(destFile)
                         //单个单个地复制文件
@@ -110,6 +107,9 @@ abstract class BaseTransform() : Transform() {
                         if (destFile.exists()) {
                             FileUtils.forceDelete(destFile)
                         }
+                    }
+                    else -> {
+
                     }
                 }
             }
@@ -140,10 +140,6 @@ abstract class BaseTransform() : Transform() {
         val dest = outputProvider.getContentLocation(jarInput.name,jarInput.contentTypes,jarInput.scopes,Format.JAR)
         if (isIncremental) {
             when(jarInput.status) {
-                Status.NOTCHANGED -> {
-                    return
-                }
-
                 Status.ADDED,Status.CHANGED -> {
                     transformJar(jarInput,dest)
                 }
@@ -152,6 +148,9 @@ abstract class BaseTransform() : Transform() {
                     if (dest.exists()) {
                         FileUtils.forceDelete(dest)
                     }
+                }
+                else -> {
+
                 }
             }
         } else {
@@ -230,8 +229,7 @@ abstract class BaseTransform() : Transform() {
         return newName.endsWith(".class") &&
                 !(newName.startsWith("R$")
                         || newName.startsWith("R.")
-                        || newName.contains('$')
-                        || newName.equals("BuildConfig.class"))
+                        || newName.contains('$'))
     }
 
     private fun traceFile(inputStream: FileInputStream, outputStream:FileOutputStream) {

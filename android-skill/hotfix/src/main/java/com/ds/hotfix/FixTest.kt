@@ -1,11 +1,16 @@
-package com.four.util.zhf
+package com.ds.hotfix
+
+import android.content.Context
+import android.util.Log
 
 class FixTest {
     companion object {
-        @JvmStatic var changeQuickRedirect:ChangeQuickRedirect? = null
+        @JvmStatic var changeQuickRedirect: ChangeQuickRedirect? = null
+        const val TAG = "FixTest"
     }
 
     fun test():Int {
+        changeQuickRedirect = FixProxy()
         changeQuickRedirect?.let {
             //changeQuickRedirect不为空时 由补丁包代理
             if (it.isSupport("test", arrayOf())) {
@@ -13,5 +18,9 @@ class FixTest {
             }
         }
         return 99
+    }
+
+    fun launchFixTest(context: Context) {
+        Log.e(TAG,"launchFixTest invoke")
     }
 }

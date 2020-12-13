@@ -1,12 +1,18 @@
 package com.four.ds_home.main
 
 import android.os.Bundle
+import com.ds.hotfix.Fix
+import com.ds.hotfix.FixTest
 import com.four.api_weather.WeatherLauncher
 import com.four.base.zy.activity.BaseActivity
 import com.four.ds_home.R
 import kotlinx.android.synthetic.main.activity_home.*
 
 class HomeActivity : BaseActivity() {
+
+    private val hotfixLauncher by lazy {
+         FixTest()
+    }
 
     override fun getLayoutId(): Int = R.layout.activity_home
 
@@ -15,6 +21,10 @@ class HomeActivity : BaseActivity() {
 
         btnToWeather.setOnClickListener {
             WeatherLauncher.openWeatherPage(this)
+        }
+
+        btnToHotFix.setOnClickListener {
+            hotfixLauncher.launchFixTest(this)
         }
     }
 }

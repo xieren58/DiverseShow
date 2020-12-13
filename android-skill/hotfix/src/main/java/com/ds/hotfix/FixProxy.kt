@@ -1,4 +1,4 @@
-package com.four.util.zhf
+package com.ds.hotfix
 
 class FixProxy: ChangeQuickRedirect {
     override fun accessDispatch(methodSignature: String, paramArrayOfObject: Array<Any>): Any? {
