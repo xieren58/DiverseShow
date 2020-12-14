@@ -12,9 +12,6 @@ import org.gradle.kotlin.dsl.project
  */
 object DepInterceptor {
 
-    /**
-     * 目前只拦截project类型
-     */
     fun interceptImplProject(handlerScope: DependencyHandlerScope,
                              path: String,
                              fromKts: Boolean = true) : Boolean {
@@ -66,6 +63,62 @@ object DepInterceptor {
                          fromKts: Boolean = true) : Boolean {
         if (DepInterceptHelper.checkCanIntercept() && !fromKts) {
             depExt(DepConstant.Type.API, DepConstant.Ext.AAR, handlerScope, name, group, version)
+            return true
+        }
+        return false
+    }
+
+    fun interceptAPTRepo(handlerScope: DependencyHandlerScope,
+                          variant: String,
+                          fromKts: Boolean = true) : Boolean {
+        if (DepInterceptHelper.checkCanIntercept() && !fromKts) {
+            depRepo(DepConstant.Type.ANNOTATION_PROCESSOR, variant, handlerScope)
+            return true
+        }
+        return false
+    }
+
+    fun interceptAPTProject(handlerScope: DependencyHandlerScope,
+                             path: String,
+                             fromKts: Boolean = true) : Boolean {
+        return handleDepProject(handlerScope, path, DepConstant.Type.ANNOTATION_PROCESSOR, fromKts)
+    }
+
+    fun interceptAPTAar(handlerScope: DependencyHandlerScope,
+                        name: String,
+                        group: String = "",
+                        version: String? = null,
+                        fromKts: Boolean = true) : Boolean {
+        if (DepInterceptHelper.checkCanIntercept() && !fromKts) {
+            depExt(DepConstant.Type.ANNOTATION_PROCESSOR, DepConstant.Ext.AAR, handlerScope, name, group, version)
+            return true
+        }
+        return false
+    }
+
+    fun interceptKAPTRepo(handlerScope: DependencyHandlerScope,
+                         variant: String,
+                         fromKts: Boolean = true) : Boolean {
+        if (DepInterceptHelper.checkCanIntercept() && !fromKts) {
+            depRepo(DepConstant.Type.K_APT, variant, handlerScope)
+            return true
+        }
+        return false
+    }
+
+    fun interceptKAPTProject(handlerScope: DependencyHandlerScope,
+                            path: String,
+                            fromKts: Boolean = true) : Boolean {
+        return handleDepProject(handlerScope, path, DepConstant.Type.K_APT, fromKts)
+    }
+
+    fun interceptKAPTAar(handlerScope: DependencyHandlerScope,
+                        name: String,
+                        group: String = "",
+                        version: String? = null,
+                        fromKts: Boolean = true) : Boolean {
+        if (DepInterceptHelper.checkCanIntercept() && !fromKts) {
+            depExt(DepConstant.Type.K_APT, DepConstant.Ext.AAR, handlerScope, name, group, version)
             return true
         }
         return false
@@ -167,12 +220,24 @@ object DepInterceptor {
             depAll(bean, handlerScope)
             //依赖自己的aar
             val fileName = DepInterceptHelper.getFileName(DepInterceptHelper.getModuleName(path))
-            if (type == DepConstant.Type.IMPLEMENTATION) {
-                interceptImplAar(handlerScope, fileName, DepConstant.Default.GROUP,
-                    DepConstant.Default.VERSION, fromKts = false)
-            } else if (type == DepConstant.Type.API) {
-                interceptApiAar(handlerScope, fileName, DepConstant.Default.GROUP,
-                    DepConstant.Default.VERSION, fromKts = false)
+            val fromKts = false
+            when (type) {
+                DepConstant.Type.IMPLEMENTATION -> {
+                    interceptImplAar(handlerScope, fileName, DepConstant.Default.GROUP,
+                        DepConstant.Default.VERSION, fromKts)
+                }
+                DepConstant.Type.API -> {
+                    interceptApiAar(handlerScope, fileName, DepConstant.Default.GROUP,
+                        DepConstant.Default.VERSION, fromKts)
+                }
+                DepConstant.Type.ANNOTATION_PROCESSOR -> {
+                    interceptAPTAar(handlerScope, fileName, DepConstant.Default.GROUP,
+                        DepConstant.Default.VERSION, fromKts)
+                }
+                DepConstant.Type.K_APT -> {
+                    interceptKAPTAar(handlerScope, fileName, DepConstant.Default.GROUP,
+                        DepConstant.Default.VERSION, fromKts)
+                }
             }
             true
         } else false

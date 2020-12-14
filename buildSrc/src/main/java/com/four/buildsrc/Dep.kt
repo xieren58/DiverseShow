@@ -91,3 +91,30 @@ fun DependencyHandlerScope.apiProject(path: String) {
         dependencies.add("api", project(mapOf("path" to path)))
     }
 }
+
+fun DependencyHandlerScope.aptRepo(variant: String) {
+    if (!DepInterceptor.interceptAPTRepo(this, variant)) {
+        dependencies.add("annotationProcessor", variant)
+    }
+}
+
+fun DependencyHandlerScope.aptProject(path: String) {
+    if (!DepInterceptor.interceptAPTProject(this, path)) {
+        dependencies.add("annotationProcessor", project(mapOf("path" to path)))
+    }
+}
+
+/**
+ * 使用kapt时，需导入 kotlin-kapt 插件
+ */
+fun DependencyHandlerScope.kaptRepo(variant: String) {
+    if (!DepInterceptor.interceptKAPTRepo(this, variant)) {
+        dependencies.add("kapt", variant)
+    }
+}
+
+fun DependencyHandlerScope.kaptProject(path: String) {
+    if (!DepInterceptor.interceptKAPTProject(this, path)) {
+        dependencies.add("kapt", project(mapOf("path" to path)))
+    }
+}
