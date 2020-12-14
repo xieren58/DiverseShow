@@ -8,10 +8,17 @@
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnRequest"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:background="#000000"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_gravity="center"
         />
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#000000"
+        android:layout_gravity="center"
+        android:layout_marginTop="50dp"/>
 
 </FrameLayout>

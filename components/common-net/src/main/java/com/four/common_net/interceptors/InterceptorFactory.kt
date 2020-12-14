@@ -9,5 +9,5 @@ object InterceptorFactory {
     /**
      * 建议放在net拦截器
      */
-    fun createHttpLogInterceptor() = HttpLogInterceptor()
+    fun createHttpLogInterceptor() = HttpLoggingInterceptor()
 }

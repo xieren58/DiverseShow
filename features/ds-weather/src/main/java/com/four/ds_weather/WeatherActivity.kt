@@ -1,5 +1,6 @@
 package com.four.ds_weather
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -17,9 +18,14 @@ class WeatherActivity : BaseModelActivity<WeatherModel>() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun initData() {
+        val viewModel = viewModel!!
+        viewModel.weatherLiveData.observe(this) {
+            text.text = "${it.city} ${it.data[0].wea} ${it.data[0].hours[4].tem}°C"
+        }
         btnRequest.setOnClickListener {
-            viewModel?.requestWeekWeather(lifecycle)
+            viewModel.requestWeekWeather(lifecycle)
         }
     }
 }

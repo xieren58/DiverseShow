@@ -9,48 +9,48 @@ class DSLogger(
 ) {
 
     init {
-        if (!logLevel.isBigger(LogLevel.NONE)) {
+        if (logLevel.isLessThanOrEqual(LogLevel.NONE)) {
             openLog = false
         }
     }
 
     fun debug(msg: String) : DSLogger {
-        if (openLog && logLevel.isBiggerOrEqual(LogLevel.DEBUG)) {
+        if (openLog && logLevel.isLessThan(LogLevel.INFO)) {
             Log.d(name, msg)
         }
         return this
     }
 
     fun debug(tag: String, msg: String) : DSLogger {
-        if (openLog && logLevel.isBiggerOrEqual(LogLevel.DEBUG)) {
+        if (openLog && logLevel.isLessThan(LogLevel.INFO)) {
             Log.d("$name-$tag", msg)
         }
         return this
     }
 
     fun info(msg: String) : DSLogger {
-        if (openLog && logLevel.isBiggerOrEqual(LogLevel.INFO)) {
+        if (openLog && logLevel.isLessThan(LogLevel.ERROR)) {
             Log.i(name, msg)
         }
         return this
     }
 
     fun info(tag: String, msg: String) : DSLogger {
-        if (openLog && logLevel.isBiggerOrEqual(LogLevel.INFO)) {
+        if (openLog && logLevel.isLessThan(LogLevel.ERROR)) {
             Log.i("$name-$tag", msg)
         }
         return this
     }
 
     fun error(msg: String) : DSLogger {
-        if (openLog && logLevel.isBiggerOrEqual(LogLevel.ERROR)) {
+        if (openLog && logLevel.isLessThanOrEqual(LogLevel.ERROR)) {
             Log.i(name, msg)
         }
         return this
     }
 
     fun error(tag: String, msg: String) : DSLogger {
-        if (openLog && logLevel.isBiggerOrEqual(LogLevel.ERROR)) {
+        if (openLog && logLevel.isLessThanOrEqual(LogLevel.ERROR)) {
             Log.i("$name-$tag", msg)
         }
         return this

@@ -21,7 +21,7 @@ gradle.settingsEvaluated {
     if (includeStr.isNullOrEmpty()) {
         handleIncludeProjects(settings, "all")
     } else {
-        handleIncludeProjects(settings, includeStr)
+        handleIncludeProjects(settings, includeStr.replace(" ", ""))
     }
 
     println("finish include projects.")

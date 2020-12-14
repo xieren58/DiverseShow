@@ -6,7 +6,7 @@ enum class LogLevel(value: Int) {
 
     private val level: Int = value
 
-    fun isBigger(levelEnum: LogLevel) = this.level > levelEnum.level
+    fun isLessThan(levelEnum: LogLevel) = this.level < levelEnum.level
 
-    fun isBiggerOrEqual(levelEnum: LogLevel) = this.level >= levelEnum.level
+    fun isLessThanOrEqual(levelEnum: LogLevel) = this.level <= levelEnum.level
 }

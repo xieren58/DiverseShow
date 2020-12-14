@@ -39,7 +39,7 @@ class LoggerManager : InvocationHandler {
                 return defaultLogger
             }
             val config = targetAnnotation!!
-            val logger = DSLogger(config.openLog, config.logLevel)
+            val logger = DSLogger(config.openLog, config.logLevel, "ds-${config.name}")
             synchronized(this::class) {
                 val checkLogger = methodOfLoggers[method.name]
                 if (checkLogger != null) return checkLogger

@@ -5,7 +5,7 @@ import retrofit2.http.*
 
 interface WeatherNetApi {
 
-    @GET(value = "/week")
+    @GET("week")
     @Headers(
         "Accept-Charset: UTF-8",
         "Accept: application/json",
