@@ -7,7 +7,9 @@ import com.google.gson.Gson
 import org.gradle.api.DefaultTask
 import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDependency
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
+import org.gradle.api.internal.artifacts.dependencies.DefaultSelfResolvingDependency
 import org.gradle.api.tasks.TaskAction
+import org.gradle.internal.service.DefaultServiceRegistry
 import java.io.File
 
 /**
@@ -99,6 +101,13 @@ open class AssembleDebugForAar : DefaultTask() {
                             }
                         } else {
                             data.ext = DepConstant.Ext.REPO
+                        }
+                    }
+                    //jar
+                    is DefaultSelfResolvingDependency -> {
+                        it.files.elements.get().forEach { file ->
+                            data.ext = DepConstant.Ext.JAR
+                            data.filePath = file.asFile.absolutePath
                         }
                     }
                     else -> {

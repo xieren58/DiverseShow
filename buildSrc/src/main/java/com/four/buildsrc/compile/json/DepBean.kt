@@ -19,6 +19,8 @@ data class DepBean(@SerializedName("impl_list")
                     var ext: String = "",
 
                     @SerializedName("project_path")
-                    var projectPath: String? = null
+                    var projectPath: String? = null,
+                    @SerializedName("file_path")
+                    var filePath: String? = null
     )
 }

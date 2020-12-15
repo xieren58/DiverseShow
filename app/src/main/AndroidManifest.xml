@@ -13,6 +13,12 @@
     android:supportsRtl="true"
     android:theme="@style/Theme.DiverseShow">
 
+
+    <meta-data
+        android:name="com.amap.api.v2.apikey"
+        android:value="27f996a80eeb2bf5a4bd78cd5e03d76b" />
+    <service android:name="com.amap.api.location.APSService" />
+
   </application>
 
 </manifest>

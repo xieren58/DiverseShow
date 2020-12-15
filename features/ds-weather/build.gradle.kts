@@ -46,4 +46,5 @@ dependencies {
     implProject(Dep.commonBaseProject)
     implProject(Dep.commonUtilProject)
     implProject(Dep.commonNetProject)
+    implProject(Dep.commonMapProject)
 }

@@ -2,7 +2,9 @@ package com.four.buildsrc
 
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import com.four.buildsrc.compile.intercept.DepInterceptor
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.kotlin.dsl.accessors.runtime.addExternalModuleDependencyTo
+import java.io.File
 
 /**
  * 所有依赖的库
@@ -40,12 +42,14 @@ object Dep {
     const val commonBaseProject = ":components:base"
     const val commonNetProject = ":components:common-net"
     const val commonUtilProject = ":components:common-util"
+    const val commonMapProject = ":components:common-map"
 
     const val featureHomeProject = ":features:ds-home"
     const val featureWeatherProject = ":features:ds-weather"
     const val apiWeatherProject = ":components:api:api-weather"
 
     const val skillHotfixProject = ":android-skill:hotfix"
+    const val skillPluginsProject = ":android-skill:plugins"
 }
 
 fun DependencyHandlerScope.implRepo(variant: String) {
@@ -65,6 +69,12 @@ fun DependencyHandlerScope.implAar(name: String, group: String = "", version: St
         addExternalModuleDependencyTo(this.dependencies,
             "implementation", group, name, version,
             null, null, "aar", null)
+    }
+}
+
+fun DependencyHandlerScope.implJar(files: ConfigurableFileCollection) {
+    if (!DepInterceptor.interceptImplJar(this, files)) {
+        add("implementation", files)
     }
 }
 
@@ -101,6 +111,12 @@ fun DependencyHandlerScope.aptRepo(variant: String) {
 fun DependencyHandlerScope.aptProject(path: String) {
     if (!DepInterceptor.interceptAPTProject(this, path)) {
         dependencies.add("annotationProcessor", project(mapOf("path" to path)))
+    }
+}
+
+fun DependencyHandlerScope.apiJar(files: ConfigurableFileCollection) {
+    if (!DepInterceptor.interceptApiJar(this, files)) {
+        add("api", files)
     }
 }
 

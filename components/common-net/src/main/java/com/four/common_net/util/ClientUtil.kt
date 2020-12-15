@@ -22,8 +22,10 @@ object ClientUtil {
         .readTimeout(READ_TIME_OUT, TimeUnit.SECONDS)
         .writeTimeout(WRITE_TIME_OUT, TimeUnit.SECONDS)
 
-    fun createNewClientBuilder(baseUrl: String) = Retrofit.Builder()
-        .client(createNewOkClientBuilder().build())
+    fun createNewClientBuilder(baseUrl: String,
+                               client: OkHttpClient = createNewOkClientBuilder().build()
+    ) = Retrofit.Builder()
+        .client(client)
         .baseUrl(baseUrl)
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

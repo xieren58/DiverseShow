@@ -6,6 +6,7 @@ val allProjects = arrayOf(
     ":components:base",
     ":components:common-net",
     ":components:common-util",
+    ":components:common-map",
 
     ":features:ds-home",
     ":features:ds-weather",

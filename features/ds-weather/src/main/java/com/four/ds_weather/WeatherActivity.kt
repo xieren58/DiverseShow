@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.four.base.zy.activity.BaseModelActivity
+import com.four.common_map.Test
 import kotlinx.android.synthetic.main.activity_weather.*
 
 class WeatherActivity : BaseModelActivity<WeatherModel>() {
@@ -27,6 +28,7 @@ class WeatherActivity : BaseModelActivity<WeatherModel>() {
         btnRequest.setOnClickListener {
             viewModel.requestWeekWeather(lifecycle)
         }
+        Test().t()
     }
 }
 

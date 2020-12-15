@@ -3,9 +3,11 @@ package com.four.buildsrc.compile.intercept
 import com.four.buildsrc.compile.DepConstant
 import com.four.buildsrc.compile.json.DepBean
 import org.gradle.api.Project
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 import org.gradle.kotlin.dsl.accessors.runtime.addExternalModuleDependencyTo
 import org.gradle.kotlin.dsl.project
+import java.io.File
 
 /**
  * 依赖拦截
@@ -27,6 +29,12 @@ object DepInterceptor {
             depExt(DepConstant.Type.IMPLEMENTATION, DepConstant.Ext.AAR, handlerScope, name, group, version)
             return true
         }
+        return false
+    }
+
+    fun interceptImplJar(handlerScope: DependencyHandlerScope,
+                         files: ConfigurableFileCollection, fromKts: Boolean = true) : Boolean {
+        //handlerScope.add(DepConstant.Type.IMPLEMENTATION, files)
         return false
     }
 
@@ -67,6 +75,13 @@ object DepInterceptor {
         }
         return false
     }
+
+    fun interceptApiJar(handlerScope: DependencyHandlerScope,
+                         files: ConfigurableFileCollection, fromKts: Boolean = true) : Boolean {
+        //handlerScope.add(DepConstant.Type.API, collection)
+        return false
+    }
+
 
     fun interceptAPTRepo(handlerScope: DependencyHandlerScope,
                           variant: String,
@@ -146,6 +161,7 @@ object DepInterceptor {
 
     private fun depAll(bean: DepBean, handlerScope: DependencyHandlerScope) {
         val fromKts = false
+        //jar包直接打进aar
         bean.implList.forEach {
             when (it.ext) {
                 DepConstant.Ext.REPO -> {
@@ -153,6 +169,9 @@ object DepInterceptor {
                 }
                 DepConstant.Ext.PROJECT -> {
                     interceptImplProject(handlerScope, it.projectPath!!, fromKts)
+                }
+                DepConstant.Ext.JAR -> {
+                    //interceptImplJar(handlerScope, DepInterceptHelper.getFiles(it.filePath!!), fromKts)
                 }
                 else -> {
                     interceptImplAar(handlerScope, it.name, it.group, it.version, fromKts)
@@ -166,6 +185,9 @@ object DepInterceptor {
                 }
                 DepConstant.Ext.PROJECT -> {
                     interceptApiProject(handlerScope, it.projectPath!!, fromKts)
+                }
+                DepConstant.Ext.JAR -> {
+                    //interceptApiJar(handlerScope, DepInterceptHelper.getFiles(it.filePath!!), fromKts)
                 }
                 else -> {
                     interceptApiAar(handlerScope, it.name, it.group, it.version, fromKts)
