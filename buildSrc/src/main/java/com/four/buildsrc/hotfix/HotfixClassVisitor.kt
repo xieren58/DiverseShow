@@ -3,15 +3,14 @@ package com.four.buildsrc.hotfix
 
 import org.objectweb.asm.*
 import org.objectweb.asm.commons.AdviceAdapter
+import org.objectweb.asm.util.CheckMethodAdapter
 
 class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     Opcodes.ASM8,
     classWriter
 ) {
 
-    companion object {
-        @JvmStatic private var isFieldExist: Boolean = false
-    }
+    private var isFieldExist: Boolean = false
 
     override fun visit(
         version: Int,
@@ -22,9 +21,11 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         interfaces: Array<out String>?
     ) {
         super.visit(Opcodes.V1_8, access, name, signature, superName, interfaces)
+        //为避免属性重复添加 在此执行属性添加逻辑
+        //同时为了添加方法前的判断逻辑 先添加字段
         if (!isFieldExist) {
             val fieldVisitor = cv.visitField(
-                Opcodes.ACC_PRIVATE or Opcodes.ACC_STATIC,
+                Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC,
                 "changeQuickRedirect",
                 "Lcom/ds/hotfix/ChangeQuickRedirect;",
                 null,
@@ -97,7 +98,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         /*println(
             "HotfixClassVisitor visit--- descriptor:$descriptor-access:$access" +
                     "-name$name-signature$signature-exceptions$exceptions")*/
-        if(isFieldExist) {
+        if(isFieldExist && !name.equals("<clinit>")) {
             val methodVisitor = classWriter.visitMethod(
                 access,
                 name,
@@ -110,23 +111,8 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         return super.visitMethod(access, name, descriptor, signature, exceptions)
     }
 
-    //为避免属性重复添加 在此执行属性添加逻辑
     override fun visitEnd() {
         super.visitEnd()
-        if (!isFieldExist) {
-            val fieldVisitor = cv.visitField(
-                Opcodes.ACC_PRIVATE or Opcodes.ACC_STATIC,
-                "changeQuickRedirect", "Lcom/ds/hotfix/ChangeQuickRedirect;",
-                null, null
-            )
-            val annotationVisitor = fieldVisitor.visitAnnotation(
-                "Lorg/jetbrains/annotations/Nullable;", false
-            )
-            annotationVisitor.visitEnd()
-            fieldVisitor.visitEnd()
-            isFieldExist = true
-            println("------------changeQuickRedirect字段 visitEnd注入完成----------------------")
-        }
     }
 
     class FixCheckMethodVisitor(
@@ -138,7 +124,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         override fun onMethodEnter() {
             super.onMethodEnter()
             println("------------changeQuickRedirect 方法内判空执行----------------------")
-            val label0 = Label()
+            /*val label0 = Label()
             mv.visitLabel(label0)
             mv.visitFieldInsn(
                 GETSTATIC,
@@ -155,7 +141,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
             mv.visitLabel(label2)
             mv.visitLocalVariable("this", "Lcom/ds/hotfix/FixTest;", null, label0, label2, 0)
             mv.visitMaxs(1, 1)
-            mv.visitEnd()
+            mv.visitEnd()*/
             /*mv.visitFieldInsn(
                 GETSTATIC,
                 "com/ds/hotfix/Fix",

@@ -9,6 +9,7 @@ import org.apache.commons.io.IOUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
+import org.objectweb.asm.util.CheckClassAdapter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

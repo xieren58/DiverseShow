@@ -2,7 +2,10 @@ package com.ds.hotfix;
 
 import android.util.Log;
 
+import androidx.annotation.Nullable;
+
 public class Fix {
+    @Nullable
     public static ChangeQuickRedirect changeQuickRedirect;
     public void test() {
         if (changeQuickRedirect != null ) {

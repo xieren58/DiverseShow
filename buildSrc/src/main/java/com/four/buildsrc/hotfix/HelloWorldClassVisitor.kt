@@ -14,8 +14,12 @@ class HelloWorldClassVisitor(private val classWriter: ClassWriter): ClassVisitor
         signature: String?,
         exceptions: Array<out String>?
     ): MethodVisitor {
-        val methodVisitor = classWriter.visitMethod(access, name, descriptor, signature, exceptions)
-        return HelloWorldMethodVisitor(api,methodVisitor,access, name, descriptor)
+        println("name:$name --- descriptor: $descriptor")
+        if(!name.equals("<clinit>")) {
+            val methodVisitor = classWriter.visitMethod(access, name, descriptor, signature, exceptions)
+            return HelloWorldMethodVisitor(api,methodVisitor,access, name, descriptor)
+        }
+        return super.visitMethod(access, name, descriptor, signature, exceptions)
     }
 
     override fun visitField(
@@ -35,13 +39,14 @@ class HelloWorldClassVisitor(private val classWriter: ClassWriter): ClassVisitor
     override fun visitEnd() {
         super.visitEnd()
         if (!isFieldExist) {
-            val fieldVisitor = cv.visitField(Opcodes.ACC_PRIVATE or Opcodes.ACC_STATIC,
+            val fieldVisitor = cv.visitField(Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC,
                 "changeQuickRedirect", "Lcom/ds/hotfix/ChangeQuickRedirect;",
                 null, null)
             val annotationVisitor = fieldVisitor.visitAnnotation(
                 "Lorg/jetbrains/annotations/Nullable;", false)
             annotationVisitor.visitEnd()
             fieldVisitor.visitEnd()
+            isFieldExist = true
             println("------------changeQuickRedirect 字段注入完成----------------------")
         }
     }
