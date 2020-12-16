@@ -5,8 +5,8 @@ package com.ds.hotfix
  */
 interface ChangeQuickRedirect {
     //执行具体的修复或替换逻辑
-    fun accessDispatch(methodSignature: String, paramArrayOfObject: Array<Any>): Any?
+    fun accessDispatch(methodSignature: String, paramArrayOfObject: Array<Any>?): Any?
 
     //判断当前方法是否为补丁包中需要修复的方法
-    fun isSupport(methodSignature: String,paramArrayOfObject: Array<Any>): Boolean
+    fun isSupport(methodSignature: String,`object`: Any): Boolean
 }

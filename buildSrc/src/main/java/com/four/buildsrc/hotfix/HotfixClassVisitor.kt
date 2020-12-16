@@ -172,6 +172,24 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         override fun onMethodEnter() {
             super.onMethodEnter()
             println("------------changeQuickRedirect 方法内判空执行----------------------")
+            val label = Label()
+            mv.visitLabel(label)
+            mv.visitLineNumber(10, label)
+            mv.visitTypeInsn(NEW, "com/ds/hotfix/FixProxy")
+            mv.visitInsn(DUP)
+            mv.visitMethodInsn(
+                INVOKESPECIAL,
+                "com/ds/hotfix/FixProxy",
+                "<init>",
+                "()V",
+                false
+            )
+            mv.visitFieldInsn(
+                PUTSTATIC,
+                owner,
+                "changeQuickRedirect",
+                "Lcom/ds/hotfix/ChangeQuickRedirect;"
+            )
             val label0 = Label()
             mv.visitLabel(label0)
             mv.visitFieldInsn(
@@ -181,11 +199,47 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
                 "Lcom/ds/hotfix/ChangeQuickRedirect;"
             )
             val label1 = Label()
-            mv.visitJumpInsn(IFNONNULL, label1)
+            mv.visitJumpInsn(IFNULL, label1)
             val label2 = Label()
             mv.visitLabel(label2)
+            mv.visitFieldInsn(
+                GETSTATIC,
+                owner,
+                "changeQuickRedirect",
+                "Lcom/ds/hotfix/ChangeQuickRedirect;"
+            )
+            mv.visitLdcInsn("test")
+            mv.visitVarInsn(ALOAD, 0)
+            mv.visitMethodInsn(
+                INVOKEINTERFACE,
+                "com/ds/hotfix/ChangeQuickRedirect",
+                "isSupport",
+                "(Ljava/lang/String;Ljava/lang/Object;)Z",
+                true
+            )
+            mv.visitJumpInsn(IFEQ, label1)
+            val label3 = Label()
+            mv.visitLabel(label3)
+            mv.visitFieldInsn(
+                GETSTATIC,
+                owner,
+                "changeQuickRedirect",
+                "Lcom/ds/hotfix/ChangeQuickRedirect;"
+            )
+            mv.visitLdcInsn("test")
+            mv.visitInsn(ACONST_NULL)
+            mv.visitMethodInsn(
+                INVOKEINTERFACE,
+                "com/ds/hotfix/ChangeQuickRedirect",
+                "accessDispatch",
+                "(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/Object;",
+                true
+            )
+            mv.visitInsn(POP)
+            val label4 = Label()
+            mv.visitLabel(label4)
             mv.visitLdcInsn("as")
-            mv.visitLdcInsn("launchFixTest invoke")
+            mv.visitLdcInsn("fix invoke!")
             mv.visitMethodInsn(
                 INVOKESTATIC,
                 "android/util/Log",
@@ -197,17 +251,10 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
             mv.visitLabel(label1)
             mv.visitFrame(F_SAME, 0, null, 0, null)
             mv.visitInsn(RETURN)
-            val label3 = Label()
-            mv.visitLabel(label3)
-            mv.visitLocalVariable(
-                "this",
-                "L$owner;",
-                null,
-                label0,
-                label3,
-                0
-            )
-            mv.visitMaxs(2, 1)
+            val label5 = Label()
+            mv.visitLabel(label5)
+            mv.visitLocalVariable("this", "L$owner;", null, label0, label5, 0)
+            mv.visitMaxs(3, 1)
             mv.visitEnd()
         }
 
@@ -216,9 +263,11 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         }
     }
 
-    class StaticCodeMethodVisitor(private val owner: String,
-                                  api: Int, methodVisitor: MethodVisitor,
-                                  access: Int, name: String, descriptor: String):
+    class StaticCodeMethodVisitor(
+        private val owner: String,
+        api: Int, methodVisitor: MethodVisitor,
+        access: Int, name: String, descriptor: String
+    ):
         AdviceAdapter(api, methodVisitor, access, name, descriptor) {
 
         override fun onMethodEnter() {
@@ -231,12 +280,14 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
                 "$owner${'$'}Companion",
                 "<init>",
                 "(Lkotlin/jvm/internal/DefaultConstructorMarker;)V",
-                false)
+                false
+            )
             mv.visitFieldInsn(
                 PUTSTATIC,
                 owner,
                 "Companion",
-                "L$owner${'$'}Companion;")
+                "L$owner${'$'}Companion;"
+            )
             mv.visitInsn(RETURN)
             mv.visitMaxs(3, 0);
             mv.visitEnd()
