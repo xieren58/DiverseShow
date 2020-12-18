@@ -5,6 +5,7 @@ import android.util.Log
 
 class FixTest {
 
+    @FixModifier
     fun test() {
 
     }

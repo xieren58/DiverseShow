@@ -6,6 +6,7 @@ import android.util.Log;
 
 public class Fix {
     public static ChangeQuickRedirect changeQuickRedirect;
+    @FixModifier
     public void test() {
         changeQuickRedirect = new FixProxy();
         if (changeQuickRedirect != null) {
