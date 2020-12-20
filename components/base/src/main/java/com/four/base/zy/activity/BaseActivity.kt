@@ -26,6 +26,8 @@ abstract class BaseActivity : AppCompatActivity(), IViewFinder {
 
     override fun <V : View> findView(id: Int): V? = findViewById<V>(id)
 
+    override fun <V : View> findViewNoNull(id: Int) = this.findViewById<V>(id)!!
+
     protected open fun hideActionBar() = true
 
     @LayoutRes

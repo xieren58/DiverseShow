@@ -1,6 +1,7 @@
-package com.four.buildsrc.compile
+package com.four.buildsrc.compile.task
 
 import com.android.build.gradle.internal.plugins.AppPlugin
+import com.four.buildsrc.compile.DepConstant
 import com.four.buildsrc.compile.json.*
 import com.four.buildsrc.util.*
 import com.google.gson.Gson
@@ -9,7 +10,6 @@ import org.gradle.api.internal.artifacts.dependencies.DefaultExternalModuleDepen
 import org.gradle.api.internal.artifacts.dependencies.DefaultProjectDependency
 import org.gradle.api.internal.artifacts.dependencies.DefaultSelfResolvingDependency
 import org.gradle.api.tasks.TaskAction
-import org.gradle.internal.service.DefaultServiceRegistry
 import java.io.File
 
 /**
@@ -89,7 +89,7 @@ open class AssembleDebugForAar : DefaultTask() {
                 when (it) {
                     is DefaultProjectDependency -> {
                         data.group = DepConstant.Default.GROUP
-                        data.ext =  DepConstant.Ext.PROJECT
+                        data.ext = DepConstant.Ext.PROJECT
                         data.projectPath =  it.dependencyProject.path
                             ?: throw NullPointerException("project path is null")
                     }

@@ -7,7 +7,8 @@ object WeatherHelper {
     const val WEEK_BASE_URL = "https://weatherweek.api.bdymkt.com"
 
     val client = ClientUtil
-        .createNewClientBuilder(WEEK_BASE_URL)
+        .createNewClientBuilder(WEEK_BASE_URL,
+            ClientUtil.createNewOkClientBuilder().addInterceptor(HostInterceptor()).build())
         .build()
         .create(WeatherNetApi::class.java)
 }

@@ -6,6 +6,8 @@ import com.four.buildsrc.compile.intercept.DepInterceptHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import com.four.buildsrc.PluginSwitch
+import com.four.buildsrc.compile.task.AssembleDebugForAar
+import com.four.buildsrc.compile.task.ImplHelpTask
 
 /**
  * 为每个project添加task
@@ -31,6 +33,9 @@ class AssembleDebugForAarPlugin : Plugin<Project> {
                         if (this.plugins.hasPlugin(LibraryPlugin::class.java)) {
                             addTaskToSubObject(this)
                         }
+                    }
+                    if (null == tasks.findByName(ImplHelpTask.NAME)) {
+                        this.tasks.create(ImplHelpTask.NAME, ImplHelpTask::class.java)
                     }
                 }
             } else {

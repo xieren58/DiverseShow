@@ -1,11 +1,10 @@
 package com.four.buildsrc.compile.intercept
 
-import com.four.buildsrc.compile.AssembleDebugForAar
+import com.four.buildsrc.compile.task.AssembleDebugForAar
 import com.four.buildsrc.compile.DepConstant
 import com.four.buildsrc.compile.json.DepBean
 import com.google.gson.Gson
 import org.gradle.api.Project
-import org.gradle.api.file.ConfigurableFileCollection
 import java.io.File
 import java.nio.charset.StandardCharsets
 

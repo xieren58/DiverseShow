@@ -26,6 +26,8 @@ abstract class BaseFragment : Fragment(), IViewFinder {
 
     override fun <V : View> findView(id: Int) = this.view?.findViewById<V>(id)
 
+    override fun <V : View> findViewNoNull(id: Int) = this.view?.findViewById<V>(id)!!
+
     @LayoutRes
     protected abstract fun getLayoutId() : Int
 }
