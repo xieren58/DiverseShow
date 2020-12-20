@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.*
 import com.four.base.zy.activity.BaseActivity
 import com.four.base.zy.fragment.BaseFragment
+import com.four.common_util.log.DSLog
 import java.lang.reflect.ParameterizedType
 
 /**
@@ -39,18 +40,27 @@ abstract class BaseController<VM : ViewModel> (private val context: Context)
 
     @CallSuper
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    protected open fun onCreate() {
+    open fun onCreate() {
+        val vm = createViewModel()
+        if (vm != null) {
+            onViewModelInit(vm)
+        }
+        viewModel = vm
         bindView(context as IViewFinder)
-        viewModel = createViewModel()
-        iniData()
+        initData()
+        DSLog.d("${this::class.qualifiedName} onCreate()")
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    protected open fun onDestroy() { }
+    open fun onDestroy() {
+        DSLog.d("${this::class.qualifiedName} onDestroy()")
+    }
 
     protected open fun createViewModel() : VM? = createViewModelByType()
 
-    protected open fun iniData() { }
+    protected open fun onViewModelInit(model: VM) { }
+
+    protected open fun initData() { }
 
     protected abstract fun bindView(finder: IViewFinder)
 

@@ -1,8 +1,4 @@
-import com.four.buildsrc.androidTestImpl
-import com.four.buildsrc.implRepo
-import com.four.buildsrc.testImpl
-import com.four.buildsrc.Env
-import com.four.buildsrc.Dep
+import com.four.buildsrc.*
 
 plugins {
     id("com.android.library")
@@ -45,4 +41,6 @@ dependencies {
     implRepo(Dep.lifecycleViewModelKTX)
     implRepo(Dep.lifecycleExtensions)
     implRepo(Dep.eventLine)
+
+    apiProject(Dep.commonUtilProject)
 }

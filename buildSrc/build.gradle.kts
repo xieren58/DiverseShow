@@ -3,7 +3,7 @@ plugins {
 }
 
 //定义资源目录
-val javaSourcePath = "src/main/kotlin"
+val javaSourcePath = "src/main/java"
 sourceSets.main.get().java.srcDir(javaSourcePath)
 
 repositories {
@@ -16,6 +16,8 @@ repositories {
 }
 
 dependencies {
+    api(gradleApi())
+    api(localGroovy())
     //gradle工具
     implementation("com.android.tools.build:gradle:4.1.1")
 
@@ -26,4 +28,6 @@ dependencies {
 
     //常用io操作
     implementation("commons-io:commons-io:2.6")
+
+    implementation("com.google.code.gson:gson:2.8.1")
 }

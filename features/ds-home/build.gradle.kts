@@ -45,10 +45,5 @@ dependencies {
 
     implProject(Dep.commonBaseProject)
     implProject(Dep.apiWeatherProject)
+    implProject(Dep.skillHotfixProject)
 }
-
-//afterEvaluate {
-//    project.configurations.asMap["implementation"]?.allDependencies?.forEach {
-//        com.four.buildsrc.util.Logger.log(it::class.java.simpleName + it.name + it.version)
-//    }
-//}

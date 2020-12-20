@@ -1,8 +1,4 @@
-import com.four.buildsrc.androidTestImpl
-import com.four.buildsrc.implRepo
-import com.four.buildsrc.testImpl
-import com.four.buildsrc.Env
-import com.four.buildsrc.Dep
+import com.four.buildsrc.*
 
 plugins {
     id("com.android.library")
@@ -41,7 +37,8 @@ dependencies {
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
 
-    implRepo(Dep.autoDispose2)
-    implRepo(Dep.rxAndroid3)
-    implRepo(Dep.rxjava3)
+    apiRepo(Dep.autoDisposeAndroid)
+    apiRepo(Dep.rxAndroid2)
+    apiRepo(Dep.rxjava2)
+    apiRepo(Dep.gson)
 }

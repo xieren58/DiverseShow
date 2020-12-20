@@ -11,8 +11,8 @@ abstract class BaseModelActivity<VM : ViewModel> : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        bindView()
         viewModel = createViewModel()
+        bindView()
         initData()
     }
 

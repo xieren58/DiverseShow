@@ -3,41 +3,43 @@
  */
 val allProjects = arrayOf(
     ":app",
-
     ":components:base",
     ":components:common-net",
     ":components:common-util",
+    ":components:common-map",
 
     ":features:ds-home",
     ":features:ds-weather",
+    ":components:api:api-weather",
 
-    ":components:api:api-weather"
+    ":android-skill:hotfix",
+    ":android-skill:plugins"
 )
 
 gradle.settingsEvaluated {
-    //这里我只能想到手解属性，似乎在settings.gradle下找不到properties
-    val includeProjectsName = "includeProjects"
-    val outProjectsName = "outProjects"
-    val includeStr = extra.properties[includeProjectsName].toString()
-    val outStr = extra.properties[outProjectsName].toString()
+    val includeProjectsName = "run.projects"
+    val includeStr = getProperty(includeProjectsName, settings)?.toString()
 
-    if (includeStr.isNotEmpty()) {
-        val targetStr = includeStr
-            .replace(" ", "")
-        handleIncludeProjects(settings, targetStr)
-        return@settingsEvaluated
+    if (includeStr.isNullOrEmpty()) {
+        handleIncludeProjects(settings, "all")
+    } else {
+        handleIncludeProjects(settings, includeStr.replace(" ", ""))
     }
-    if (outStr.isNotEmpty()) {
-        val targetStr = outStr
-            .replace(" ", "")
-            .replace("$outProjectsName=", "")
-        handleOutProjects(settings, targetStr)
-        return@settingsEvaluated
-    }
-
-
 
     println("finish include projects.")
+}
+
+fun getProperty(property: String, settings: Settings) : Any? {
+    val properties = java.util.Properties()
+    val inputStream = file("${settings.rootDir}/local.properties").inputStream()
+    try {
+        properties.load(inputStream)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        throw e
+    }
+    val value = properties[property]
+    return value ?: settings.extra.properties[property]
 }
 
 fun handleIncludeProjects(settings: Settings, str: String) {
@@ -52,24 +54,6 @@ fun handleIncludeProjects(settings: Settings, str: String) {
                     settings.include(project)
                 }
             }
-        }
-    }
-}
-
-fun handleOutProjects(settings: Settings, str: String) {
-    if ("all" == str) {
-        return
-    } else {
-        val list = allProjects.toMutableList()
-        str.split(",").forEach { target->
-            allProjects.forEach { project ->
-                if (project.endsWith(target)) {
-                    list.remove(project)
-                }
-            }
-        }
-        list.forEach {
-            settings.include(it)
         }
     }
 }

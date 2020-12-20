@@ -5,7 +5,7 @@ plugins {
     id ("kotlin-android")
 }
 
-//plugins.apply(com.four.buildsrc.hotfix.HotfixPlugin::class.java)
+plugins.apply(com.four.buildsrc.hotfix.HotfixPlugin::class.java)
 
 android  {
     compileSdkVersion(Env.COMPILE_VERSION)
@@ -21,7 +21,20 @@ android  {
         testInstrumentationRunner("androidx.test.runner.AndroidJUnitRunner")
     }
 
+    signingConfigs {
+        getAt("debug").apply {
+            storeFile(file("${rootProject.rootDir}/config/debugApk.jks"))
+            storePassword("123456")
+            keyAlias("key0")
+            keyPassword("123456")
+        }
+    }
+
     buildTypes {
+        getAt("debug").apply {
+            signingConfig = signingConfigs.getAt("debug")
+        }
+
         getAt("release").apply {
             minifyEnabled(false)
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -41,11 +54,5 @@ dependencies {
     androidTestImpl(Dep.espressoCore)
 
     implProject(Dep.featureHomeProject)
-}
-
-afterEvaluate {
-    project.configurations.asMap["implementation"]?.allDependencies?.forEach {
-        com.four.buildsrc.util.Logger.log("${it::class.java.simpleName} ${it.name} ${it.version}")
-    }
 }
 
