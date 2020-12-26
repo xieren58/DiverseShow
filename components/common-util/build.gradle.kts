@@ -41,4 +41,5 @@ dependencies {
     apiRepo(Dep.rxAndroid2)
     apiRepo(Dep.rxjava2)
     apiRepo(Dep.gson)
+    apiProject(Dep.globalProject)
 }

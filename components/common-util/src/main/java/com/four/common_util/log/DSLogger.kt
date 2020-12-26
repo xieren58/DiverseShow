@@ -44,14 +44,14 @@ class DSLogger(
 
     fun error(msg: String) : DSLogger {
         if (openLog && logLevel.isLessThanOrEqual(LogLevel.ERROR)) {
-            Log.i(name, msg)
+            Log.e(name, msg)
         }
         return this
     }
 
     fun error(tag: String, msg: String) : DSLogger {
         if (openLog && logLevel.isLessThanOrEqual(LogLevel.ERROR)) {
-            Log.i("$name-$tag", msg)
+            Log.e("$name-$tag", msg)
         }
         return this
     }

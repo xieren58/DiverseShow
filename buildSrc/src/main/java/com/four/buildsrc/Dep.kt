@@ -43,6 +43,7 @@ object Dep {
     const val commonNetProject = ":components:common-net"
     const val commonUtilProject = ":components:common-util"
     const val commonMapProject = ":components:common-map"
+    const val globalProject = ":global"
 
     const val featureHomeProject = ":features:ds-home"
     const val featureWeatherProject = ":features:ds-weather"

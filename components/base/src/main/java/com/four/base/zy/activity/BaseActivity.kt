@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import com.four.base.zy.IViewFinder
+import com.four.common_util.permission.PermissionHelper
 
 abstract class BaseActivity : AppCompatActivity(), IViewFinder {
 
@@ -22,6 +23,15 @@ abstract class BaseActivity : AppCompatActivity(), IViewFinder {
         val inflater = LayoutInflater.from(this)
         return inflater.inflate(getLayoutId(),
             window.decorView as ViewGroup, false)
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        PermissionHelper.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     override fun <V : View> findView(id: Int): V? = findViewById<V>(id)

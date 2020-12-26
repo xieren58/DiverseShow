@@ -9,10 +9,6 @@ class WeatherActivity : BaseControllerActivity<WeatherController>() {
 
     override fun hideActionBar(): Boolean = false
 
-    override fun createController(): WeatherController = WeatherController(this)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    override fun createController(): WeatherController = WeatherController(this, this)
 }
 

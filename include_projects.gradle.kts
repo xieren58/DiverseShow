@@ -13,7 +13,8 @@ val allProjects = arrayOf(
     ":components:api:api-weather",
 
     ":android-skill:hotfix",
-    ":android-skill:plugins"
+    ":android-skill:plugins",
+    ":global"
 )
 
 gradle.settingsEvaluated {

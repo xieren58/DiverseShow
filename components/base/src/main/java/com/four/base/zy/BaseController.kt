@@ -17,7 +17,7 @@ import java.lang.reflect.ParameterizedType
  * Activity - Controller - ViewModel
  *
  */
-abstract class BaseController<VM : ViewModel> (private val context: Context)
+abstract class BaseController<VM : ViewModel> (protected val context: Context)
     : LifecycleObserver {
 
     protected var viewModel : VM? = null

@@ -54,5 +54,6 @@ dependencies {
     androidTestImpl(Dep.espressoCore)
 
     implProject(Dep.featureHomeProject)
+    implProject(Dep.commonBaseProject)
 }
 

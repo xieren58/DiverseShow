@@ -43,4 +43,5 @@ dependencies {
     implRepo(Dep.eventLine)
 
     apiProject(Dep.commonUtilProject)
+    implProject(Dep.commonNetProject)
 }

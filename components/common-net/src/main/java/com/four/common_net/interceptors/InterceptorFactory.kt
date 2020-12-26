@@ -10,4 +10,9 @@ object InterceptorFactory {
      * 建议放在net拦截器
      */
     fun createHttpLogInterceptor() = HttpLoggingInterceptor()
+
+    /**
+     * 域名替换拦截器
+     */
+    fun createHostInterceptor() = HostInterceptor()
 }

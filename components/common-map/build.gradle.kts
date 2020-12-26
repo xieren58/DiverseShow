@@ -37,5 +37,6 @@ dependencies {
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
 
-    implJar(files("${project.projectDir}/libs/AMap2DMap_6.0.0_AMapSearch_7.7.0_AMapLocation_5.2.0_20201027.jar"))
+    apiJar(files("${project.projectDir}/libs/AMap2DMap_6.0.0_AMapSearch_7.7.0_AMapLocation_5.2.0_20201027.jar"))
+    implProject(Dep.commonUtilProject)
 }
