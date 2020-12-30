@@ -56,14 +56,14 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         super.visitOuterClass(owner, name, descriptor)
     }
 
-    override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
+    override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor {
         return super.visitAnnotation(descriptor, visible)
     }
 
     override fun visitTypeAnnotation(
         typeRef: Int,
-        typePath: TypePath?,
-        descriptor: String?,
+        typePath: TypePath,
+        descriptor: String,
         visible: Boolean
     ): AnnotationVisitor {
         return super.visitTypeAnnotation(typeRef, typePath, descriptor, visible)
@@ -122,7 +122,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
                 signature,
                 exceptions
             )
-            return FixCheckMethodVisitor(owner, api, methodVisitor, access, name, descriptor)
+            return FixCheckMethodVisitor(owner, fileName, api, methodVisitor, access, name, descriptor)
         }
     }
 
@@ -164,10 +164,17 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
 
     class FixCheckMethodVisitor(
         private val owner: String,
+        private val fileName: String,
         api: Int, methodVisitor: MethodVisitor,
         access: Int, name: String, descriptor: String
     )
         : AdviceAdapter(api, methodVisitor, access, name, descriptor) {
+        override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor {
+            if(descriptor.equals("Lcom/ds/hotfix/FixModifier;") || descriptor.equals("Lcom/ds/hotfix/FixAdd;")) {
+                println("current file owner: ${owner},source: $fileName")
+            }
+            return super.visitAnnotation(descriptor, visible)
+        }
 
         override fun onMethodEnter() {
             super.onMethodEnter()

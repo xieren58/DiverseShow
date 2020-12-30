@@ -44,11 +44,14 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
         var newName = name
         if (name.contains('/')) {
             val index = name.lastIndexOf('/') + 1
-            if (index+1 >= name.length) {
-                return false
+            if (index+1 < name.length) {
+                newName = name.substring(index)
             }
-            newName = name.substring(index)
         }
+        if(newName.endsWith(".class")) {
+            newName = newName.substring(0,newName.length-6)
+        }
+        println("输入文件为: $newName")
         if (newName.equals("BuildConfig.class") || newName.equals("FixTest.class")) {
             return true
         }

@@ -126,9 +126,9 @@ abstract class BaseTransform() : Transform() {
         val outputFilePath = dest.absolutePath
         val inputFilePath = directoryInput.file.absolutePath
         fileList.forEach { inputFile ->
-            println("替换前  file.absolutePath = ${inputFile.absolutePath}")
+            //println("替换前  file.absolutePath = ${inputFile.absolutePath}")
             val outputFullPath = inputFile.absolutePath.replace(inputFilePath, outputFilePath)
-            println("替换后  file.absolutePath = ${outputFullPath}")
+            //println("替换后  file.absolutePath = $outputFullPath")
             val outputFile = File(outputFullPath)
             //创建文件
             FileUtils.touch(outputFile)
@@ -189,7 +189,6 @@ abstract class BaseTransform() : Transform() {
             jarOutputStream.close()
             jarFile.close()
         } else {
-            println("${jarInput.file.name} 不处理")
             FileUtils.copyFile(jarInput.file,dest)
         }
 
@@ -201,16 +200,14 @@ abstract class BaseTransform() : Transform() {
     }
 
     private fun transformSingleFile(inputFile: File, destFile: File) {
-        println("扫描单个文件")
         if (isNeedTraceClass(destFile.name)) {
-            traceFile(inputFile.inputStream(), FileOutputStream(destFile))
+            traceFile(inputFile, destFile)
         } else {
             FileUtils.copyFile(inputFile, destFile)
         }
     }
 
     protected open fun isNeedTraceClass(name: String):Boolean {
-        println("输入文件为：$name")
         if (name.startsWith("androidx/")
             || name.startsWith("android/")
             || name.startsWith("kotlin/")
@@ -233,8 +230,9 @@ abstract class BaseTransform() : Transform() {
                         || newName.contains('$'))
     }
 
-    private fun traceFile(inputStream: FileInputStream, outputStream:FileOutputStream) {
-
+    private fun traceFile(inputFile: File, destFile:File) {
+        val inputStream = inputFile.inputStream()
+        val outputStream = FileOutputStream(destFile)
         val classReader = ClassReader(inputStream)
         val classWriter = ClassWriter(classReader,ClassWriter.COMPUTE_MAXS)
         classReader.accept(getClassVisitor(classWriter), ClassReader.EXPAND_FRAMES)
