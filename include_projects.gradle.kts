@@ -14,7 +14,10 @@ val allProjects = arrayOf(
 
     ":android-skill:hotfix",
     ":android-skill:plugins",
-    ":global:ds-app"
+    ":global:ds-app",
+    ":global:lib-init:app-init-handler",
+    ":global:lib-init:app-init-processor",
+    ":global:lib-init:app-init-transform"
 )
 
 gradle.settingsEvaluated {
