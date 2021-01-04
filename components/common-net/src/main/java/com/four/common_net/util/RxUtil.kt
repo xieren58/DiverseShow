@@ -5,8 +5,6 @@ import com.four.common_util.log.DSLog
 import com.uber.autodispose.android.lifecycle.AndroidLifecycleScopeProvider
 import com.uber.autodispose.autoDispose
 import io.reactivex.Observable
-import io.reactivex.ObservableTransformer
-import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.functions.Consumer
 import io.reactivex.plugins.RxJavaPlugins
@@ -21,7 +19,7 @@ object RxUtil {
      */
     init {
         RxJavaPlugins.setErrorHandler {
-            DSLog.default().error("RxJava发生未捕捉异常${it.message.toString()}")
+            DSLog.def().error("RxJava发生未捕捉异常${it.message.toString()}")
             it.printStackTrace()
         }
     }
@@ -29,7 +27,7 @@ object RxUtil {
 
 val logErrorConsumer = Consumer<Throwable?> {
     it?.also {
-        DSLog.default().info(it.message ?: it.toString())
+        DSLog.def().info(it.message ?: it.toString())
     }
 }
 

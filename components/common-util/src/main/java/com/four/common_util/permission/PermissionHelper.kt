@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.annotation.MainThread
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -45,8 +44,8 @@ object PermissionHelper {
                         requestPermissions(activity, permissions, callback)
                         return
                     }
-                    showToastListener?.onShowToast()
                 }
+                showToastListener?.onShowToast()
             } else {
                 requestPermissions(activity, permissions, callback)
             }
@@ -93,7 +92,7 @@ object PermissionHelper {
     fun onRequestPermissionsResult(requestCode: Int,
                                    permissions: Array<out String>,
                                    grantResults: IntArray) {
-        DSLog.default().info("on request permissions result.")
+        DSLog.def().info("on request permissions result.")
         var index = -1
         val length = callbackList.size
         while (++index < length) {

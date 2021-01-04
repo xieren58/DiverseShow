@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.four.base.zy.BaseController
 import com.four.base.zy.IViewFinder
@@ -40,9 +41,17 @@ class WeatherController(context: Context, val activity: FragmentActivity): BaseC
                 }
 
                 override fun onDenied(deniedPermissions: List<String>) {
+                    DSLog.def().info("申请权限被拒绝")
                 }
 
-            })
+            },
+            forceRequest = false,
+            object : PermissionHelper.OnShouldShowToastListener {
+                override fun onShowToast() {
+                    Toast.makeText(activity, "没有定位权限", Toast.LENGTH_SHORT).show()
+                }
+            }
+        )
     }
 
     @SuppressLint("SetTextI18n")

@@ -13,14 +13,14 @@ object DSLog : ILogger {
         arrayOf(ILogger::class.java), loggerManager)) as ILogger
 
     fun d(msg: String) {
-        default().debug(msg)
+        def().debug(msg)
     }
 
     fun d(tag: String, msg: String) {
-        default().debug(tag, msg)
+        def().debug(tag, msg)
     }
 
-    override fun default(): DSLogger = logger.default()
+    override fun def(): DSLogger = logger.def()
 
     override fun net(): DSLogger  = logger.net()
 

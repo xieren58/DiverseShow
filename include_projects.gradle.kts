@@ -14,7 +14,7 @@ val allProjects = arrayOf(
 
     ":android-skill:hotfix",
     ":android-skill:plugins",
-    ":global"
+    ":global:ds-app"
 )
 
 gradle.settingsEvaluated {

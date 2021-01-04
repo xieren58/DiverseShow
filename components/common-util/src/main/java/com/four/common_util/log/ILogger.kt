@@ -9,7 +9,7 @@ import com.four.common_util.log.annotation.Config
 interface ILogger {
 
     @Config(openLog = true, logLevel = LogLevel.DEBUG, name = "def")
-    fun default() : DSLogger
+    fun def() : DSLogger
 
     @Config(openLog = true, logLevel = LogLevel.DEBUG, name = "net")
     fun net() : DSLogger
