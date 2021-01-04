@@ -2,7 +2,6 @@
  * 此处申明所有的模块
  */
 val allProjects = arrayOf(
-    ":app",
     ":components:base",
     ":components:common-net",
     ":components:common-util",
@@ -14,13 +13,27 @@ val allProjects = arrayOf(
 
     ":android-skill:hotfix",
     ":android-skill:plugins",
-    ":global:ds-app",
+    ":global:ds-app"
+)
+
+/**
+ * app和java module默认都会依赖上
+ */
+val defProjects = arrayOf(
+    ":app",
     ":global:lib-init:app-init-handler",
     ":global:lib-init:app-init-processor",
     ":global:lib-init:app-init-transform"
 )
 
 gradle.settingsEvaluated {
+    val openAarRunName = "run.openAarRun"
+    val openAarRun = getProperty(openAarRunName, settings)?.toString()
+    if (openAarRun != null && openAarRun == "false") {
+        handleIncludeProjects(settings, "all")
+        return@settingsEvaluated
+    }
+
     val includeProjectsName = "run.projects"
     val includeStr = getProperty(includeProjectsName, settings)?.toString()
 
@@ -59,6 +72,13 @@ fun handleIncludeProjects(settings: Settings, str: String) {
                 }
             }
         }
+    }
+    includeDefProjects(settings)
+}
+
+fun includeDefProjects(settings: Settings) {
+    defProjects.forEach { target ->
+        settings.include(target)
     }
 }
 

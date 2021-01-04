@@ -42,4 +42,6 @@ dependencies {
     apiRepo(Dep.rxjava2)
     apiRepo(Dep.gson)
     apiProject(Dep.globalProject)
+
+    implementation(project(":global:lib-init:app-init-handler"))
 }
