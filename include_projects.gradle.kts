@@ -13,7 +13,8 @@ val allProjects = arrayOf(
 
     ":android-skill:hotfix",
     ":android-skill:plugins",
-    ":global:ds-app"
+    ":global:ds-app",
+    ":openCV"
 )
 
 /**

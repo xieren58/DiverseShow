@@ -15,6 +15,7 @@
       <module name="DiverseShow.features.ds-weather" target="1.8" />
       <module name="DiverseShow.global.ds-app" target="1.8" />
       <module name="DiverseShow.global.lib-init.app-init-transform" target="1.8" />
+      <module name="DiverseShow.openCV" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
