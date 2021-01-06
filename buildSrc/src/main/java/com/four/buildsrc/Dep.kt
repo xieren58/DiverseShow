@@ -51,6 +51,7 @@ object Dep {
 
     const val skillHotfixProject = ":android-skill:hotfix"
     const val skillPluginsProject = ":android-skill:plugins"
+    const val openCVProject = ":openCV"
 }
 
 fun DependencyHandlerScope.implRepo(variant: String) {

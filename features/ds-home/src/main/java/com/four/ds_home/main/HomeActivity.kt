@@ -1,8 +1,10 @@
 package com.four.ds_home.main
 
 import android.os.Bundle
+import android.widget.Toast
 import com.ds.hotfix.Fix
 import com.ds.hotfix.FixTest
+import com.example.opencv.OpenCVLauncher
 import com.four.api_weather.WeatherLauncher
 import com.four.base.zy.activity.BaseActivity
 import com.four.ds_home.R
@@ -25,6 +27,10 @@ class HomeActivity : BaseActivity() {
 
         btnToHotFix.setOnClickListener {
             hotfixLauncher.launchFixTest(this)
+        }
+
+        btnToOpenCV.setOnClickListener {
+            Toast.makeText(this,OpenCVLauncher.launchOpenCV(),Toast.LENGTH_SHORT).show()
         }
     }
 }

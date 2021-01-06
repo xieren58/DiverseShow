@@ -17,7 +17,22 @@ android  {
         targetSdkVersion(Env.TARGET_SDK_VERSION)
         versionCode(Env.VERSION_CODE)
         versionName(Env.VERSION)
+        externalNativeBuild {
+            cmake {
+                cppFlags(" -frtti -fexceptions -std=c++14  ")
+                cFlags("-DSTDC_HEADERS")
+                arguments("-DANDROID_STL=c++_shared")//使用c++_shared.so
+            }
+        }
 
+    }
+
+    packagingOptions {
+        pickFirst("lib/arm64-v8a/libopencv_java4.so")
+    }
+
+    sourceSets {
+        getAt("main").jniLibs.srcDirs("src/main/jniLibs")
     }
 
     buildTypes {
@@ -31,7 +46,7 @@ android  {
         cmake {
 
             // Provides a relative path to your CMake build script.
-            path("CMakeLists.txt")
+            path("src/main/CMakeLists.txt")
         }
     }
 }
