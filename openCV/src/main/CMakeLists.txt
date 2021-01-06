@@ -10,13 +10,12 @@ include_directories(${CMAKE_SOURCE_DIR}/cpp/include)
 #编译头文件
 #定义全局 my_source_path 变量
 file(GLOB my_source_path ${CMAKE_SOURCE_DIR}/cpp/*.cpp ${CMAKE_SOURCE_DIR}/cpp/*.c)
-add_library(tolyCV SHARED ${my_source_path})
+add_library(openCV SHARED ${my_source_path})
 
 add_library(lib_opencv SHARED IMPORTED)
 set_target_properties(lib_opencv PROPERTIES IMPORTED_LOCATION
         ${CMAKE_SOURCE_DIR}/jniLibs/${ANDROID_ABI}/libopencv_java4.so)
 
-add_library(native-lib SHARED ${CMAKE_SOURCE_DIR}/cpp/native-lib.cpp )
 # 在ndk中查找log库 取别名log-lib
 find_library(log-lib log)
 
@@ -26,8 +25,7 @@ find_library(jnigraphics-lib jnigraphics)
 
 #设置 target 需要链接的库
 target_link_libraries(
-        native-lib
-        tolyCV
+        openCV
         lib_opencv
         ${jnigraphics-lib}
         ${log-lib})

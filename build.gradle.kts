@@ -3,6 +3,7 @@ plugins.apply(com.four.buildsrc.compile.AssembleDebugForAarPlugin::class.java)
 
 buildscript {
     val kotlinVersion by extra(com.four.buildsrc.Env.KOTLIN_VERSION)
+    val kotlin_version by extra("1.3.72")
     repositories {
         maven(url = "https://maven.aliyun.com/repository/google")
         maven(url = "https://maven.aliyun.com/repository/jcenter")

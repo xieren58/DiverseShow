@@ -58,4 +58,9 @@ dependencies {
     implRepo(Dep.appcompat)
     implRepo(Dep.googleMaterial)
     implRepo(Dep.constraintLayout)
+    implRepo(Dep.kotlinStdlib)
+    implRepo(Dep.coreKTX)
+    implRepo(Dep.appcompat)
+    implRepo(Dep.googleMaterial)
+    implRepo(Dep.constraintLayout)
 }

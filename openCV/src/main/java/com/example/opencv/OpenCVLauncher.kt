@@ -1,22 +1,28 @@
 package com.example.opencv
 
+import android.app.Application
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 
 /**
  * created by demoless on 2021/1/6
  * description:
  */
-class OpenCVLauncher {
+object OpenCVLauncher {
 
-    companion object {
-        init {
-            System.loadLibrary("native-lib")
+    init {
+        System.loadLibrary("openCV")
+    }
+    @JvmStatic
+    private external fun openCVTest() : String
+    private const val TAG = "OpenCVLauncher"
+    @JvmStatic fun launchOpenCV(context: Context) : String {
+        val intent = Intent(context, OpenCVActivity::class.java)
+        if (context is Application) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        @JvmStatic
-        private external fun openCVTest() : String
-        private const val TAG = "OpenCVLauncher"
-        @JvmStatic fun launchOpenCV() : String {
-            return openCVTest()
-        }
+        context.startActivity(intent)
+        return openCVTest()
     }
 }

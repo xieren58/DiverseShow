@@ -30,7 +30,7 @@ class HomeActivity : BaseActivity() {
         }
 
         btnToOpenCV.setOnClickListener {
-            Toast.makeText(this,OpenCVLauncher.launchOpenCV(),Toast.LENGTH_SHORT).show()
+            Toast.makeText(this,OpenCVLauncher.launchOpenCV(this),Toast.LENGTH_SHORT).show()
         }
     }
 }
