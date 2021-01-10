@@ -19,7 +19,7 @@ android  {
         versionName(Env.VERSION)
         externalNativeBuild {
             cmake {
-                cppFlags(" -frtti -fexceptions -std=c++14  ")
+                cppFlags(" -frtti -fexceptions -std=c++11")
                 cFlags("-DSTDC_HEADERS")
                 arguments("-DANDROID_STL=c++_shared")//使用c++_shared.so
             }
