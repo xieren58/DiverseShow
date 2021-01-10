@@ -2,7 +2,7 @@ package com.four.ds_home.main
 
 import android.os.Bundle
 import android.widget.Toast
-import com.ds.hotfix.Fix
+import com.ds.global.IFirstFramePage
 import com.ds.hotfix.FixTest
 import com.example.opencv.OpenCVLauncher
 import com.four.api_weather.WeatherLauncher
@@ -10,7 +10,7 @@ import com.four.base.zy.activity.BaseActivity
 import com.four.ds_home.R
 import kotlinx.android.synthetic.main.activity_home.*
 
-class HomeActivity : BaseActivity() {
+class HomeActivity : BaseActivity(), IFirstFramePage {
 
     private val hotfixLauncher by lazy {
          FixTest()

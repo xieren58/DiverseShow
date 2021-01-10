@@ -1,0 +1,38 @@
+plugins {
+    id 'java-library'
+    id 'kotlin'
+    id 'maven'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url "$rootDir/repo"
+    }
+}
+
+dependencies {
+    implementation(gradleApi())
+    implementation(localGroovy())
+    //gradle工具
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.4.10")
+    implementation("com.android.tools.build:gradle:4.1.1")
+
+    //必须使用api依赖
+    api("com.ds.app_init:handler:1.0.7")
+    //implementation(project(":global:lib-init:app-init-handler"))
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: uri("${rootDir}/repo"))
+        pom.groupId = "com.ds.app_init"
+        pom.artifactId = "transform"
+        pom.version = "1.0.7"
+    }
+}

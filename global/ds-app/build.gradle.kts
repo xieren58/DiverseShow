@@ -1,11 +1,10 @@
-import com.four.buildsrc.Dep
-import com.four.buildsrc.Env
-import com.four.buildsrc.implRepo
+import com.four.buildsrc.*
 
 plugins {
     id("com.android.library")
     id("kotlin-android")
     id("kotlin-android-extensions")
+    kotlin("kapt")
 }
 
 android  {
@@ -33,4 +32,8 @@ dependencies {
     implRepo(Dep.kotlinStdlib)
     implRepo(Dep.coreKTX)
     implRepo(Dep.appcompat)
+    implRepo(Dep.annotation)
+
+    implRepo(Dep.globalInitHandler)
+    kaptRepo(Dep.globalInitProcessor)
 }

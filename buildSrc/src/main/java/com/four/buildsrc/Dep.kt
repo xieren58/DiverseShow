@@ -18,6 +18,9 @@ object Dep {
     const val constraintLayout = "androidx.constraintlayout:constraintlayout:2.0.4"
     const val googleMaterial = "com.google.android.material:material:1.2.1"
 
+    const val annotation = "androidx.annotation:annotation:1.1.0"
+    const val annotationExperimental = "androidx.annotation:annotation-experimental:1.0.0"
+
     const val junit = "junit:junit:4.+"
     const val junitExt = "androidx.test.ext:junit:1.1.2"
     const val espressoCore = "androidx.test.espresso:espresso-core:3.3.0"
@@ -44,6 +47,14 @@ object Dep {
     const val commonUtilProject = ":components:common-util"
     const val commonMapProject = ":components:common-map"
     const val globalProject = ":global:ds-app"
+
+//    const val globalInitHandlerProject = ":global:lib-init:app-init-handler"
+//    const val globalInitProcessorProject = ":global:lib-init:app-init-processor"
+//    const val globalInitTransformProject = ":global:lib-init:app-init-transform"
+    //这三个模块被发布到本地了
+    const val globalInitHandler = "com.ds.app_init:handler:1.0.7"
+    const val globalInitProcessor = "com.ds.app_init:processor:1.0.7"
+    const val globalInitTransform  = "com.ds.app_init:transform:1.0.7"
 
     const val featureHomeProject = ":features:ds-home"
     const val featureWeatherProject = ":features:ds-weather"

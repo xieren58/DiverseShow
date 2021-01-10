@@ -47,4 +47,5 @@ dependencies {
     implProject(Dep.commonBaseProject)
     implProject(Dep.apiWeatherProject)
     implProject(Dep.skillHotfixProject)
+    implProject(Dep.globalProject)
 }

@@ -32,7 +32,7 @@ object DepInterceptHelper {
         val aarFile = File(aarPath)
         val jsonFile = File(depJsonPath)
         if (!aarFile.exists() || !jsonFile.exists()) {
-            throw RuntimeException("aar file or json file is not exist.")
+            throw RuntimeException("aar file or json file is not exist. \n $aarPath \n$depJsonPath")
         }
 
         return gson.fromJson(jsonFile.readText(StandardCharsets.UTF_8), DepBean::class.java)

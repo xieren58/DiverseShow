@@ -5,29 +5,34 @@ buildscript {
     val kotlinVersion by extra(com.four.buildsrc.Env.KOTLIN_VERSION)
     val kotlin_version by extra("1.3.72")
     repositories {
+        google()
+        jcenter()
+        mavenLocal()
+        maven(url = uri("$rootDir/repo"))
         maven(url = "https://maven.aliyun.com/repository/google")
         maven(url = "https://maven.aliyun.com/repository/jcenter")
         maven(url = "https://maven.aliyun.com/nexus/content/groups/public")
         maven(url = "https://maven.aliyun.com/nexus/content/repositories/gradle-plugin")
-        google()
-        jcenter()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.1.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+        classpath(com.four.buildsrc.Dep.globalInitTransform)
     }
 }
 
 allprojects {
     repositories {
+        google()
+        jcenter()
+        mavenLocal()
+        maven(url = uri("$rootDir/repo"))
         maven(url = "https://maven.aliyun.com/repository/google")
         maven(url = "https://maven.aliyun.com/repository/jcenter")
         maven(url = "https://maven.aliyun.com/nexus/content/groups/public")
         maven(url = "https://maven.aliyun.com/nexus/content/repositories/gradle-plugin")
         maven(url = "https://oss.jfrog.org/libs-snapshot")
         maven(url = "https://jitpack.io")
-        google()
-        jcenter()
         flatDir {
             dirs(
                 "${project.rootDir}/aarrun/aars/"

@@ -3,9 +3,15 @@ import com.four.buildsrc.*
 plugins {
     id("com.android.application")
     id ("kotlin-android")
+    kotlin("kapt")
 }
 
 plugins.apply(com.four.buildsrc.hotfix.HotfixPlugin::class.java)
+plugins.apply(com.four.app_init_transform.AppInitPlugin::class.java)
+
+kapt {
+    useBuildCache = true
+}
 
 android  {
     compileSdkVersion(Env.COMPILE_VERSION)

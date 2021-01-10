@@ -3,6 +3,7 @@ import com.four.buildsrc.*
 plugins {
     id("com.android.library")
     id("kotlin-android")
+    kotlin("kapt")
 }
 
 android  {
@@ -43,5 +44,5 @@ dependencies {
     apiRepo(Dep.gson)
     apiProject(Dep.globalProject)
 
-    implementation(project(":global:lib-init:app-init-handler"))
-}
+    implRepo(Dep.globalInitHandler)
+    kaptRepo(Dep.globalInitProcessor)}

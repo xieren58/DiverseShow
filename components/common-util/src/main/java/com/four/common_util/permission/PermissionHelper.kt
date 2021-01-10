@@ -8,8 +8,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import com.four.common_util.log.DSLog
-import com.four.common_util.schedule.postUIThread
-import com.four.common_util.schedule.runUIThread
+import com.four.common_util.rx.postUIThread
+import com.four.common_util.rx.runUIThread
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
