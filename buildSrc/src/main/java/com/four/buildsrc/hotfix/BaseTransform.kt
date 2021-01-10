@@ -159,6 +159,8 @@ abstract class BaseTransform() : Transform() {
         }
     }
 
+    abstract fun copyTargetFilePath() : String
+
     private fun transformJar(jarInput: JarInput, dest: File) {
         if(isJarInputNeedTrace(jarInput.file.name)) {
             val jarFile = JarFile(jarInput.file)
@@ -172,16 +174,23 @@ abstract class BaseTransform() : Transform() {
                 val zipEntry = ZipEntry(entryName)
                 //读取jar中的输入流
                 val inputStream = jarFile.getInputStream(zipEntry)
-
+                jarOutputStream.putNextEntry(zipEntry)
                 if (isNeedTraceClass(entryName)) {
+                    /*val target = File(copyTargetFilePath())
+                    if(!target.exists()) {
+                        println("target file dose not exist!!!")
+                    }
+                    inputStream.use { input ->
+                        target.outputStream().use { output ->
+                            input.copyTo(output, DEFAULT_BUFFER_SIZE)
+                        }
+                    }*/
                     //执行插桩
-                    jarOutputStream.putNextEntry(zipEntry)
                     val classReader = ClassReader(IOUtils.toByteArray(inputStream))
                     val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                     classReader.accept(getClassVisitor(classWriter), ClassReader.EXPAND_FRAMES)
                     jarOutputStream.write(classWriter.toByteArray())
                 } else {
-                    jarOutputStream.putNextEntry(zipEntry)
                     jarOutputStream.write(IOUtils.toByteArray(inputStream))
                 }
                 jarOutputStream.closeEntry()
@@ -202,6 +211,13 @@ abstract class BaseTransform() : Transform() {
     private fun transformSingleFile(inputFile: File, destFile: File) {
         if (isNeedTraceClass(destFile.name)) {
             traceFile(inputFile, destFile)
+            copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
+                val target = File(this)
+                if(target.exists()) {
+                    FileUtils.copyFile(inputFile, target)
+                }
+            }
+
         } else {
             FileUtils.copyFile(inputFile, destFile)
         }
@@ -219,7 +235,7 @@ abstract class BaseTransform() : Transform() {
         var newName = name
         if (name.contains('/')) {
             val index = name.lastIndexOf('/') + 1
-            if (index+1 >= name.length) {
+            if (index >= name.length) {
                 return false
             }
             newName = name.substring(index)

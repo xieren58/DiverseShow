@@ -10,13 +10,25 @@ import org.gradle.api.UnknownDomainObjectException
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
 import com.four.buildsrc.PluginSwitch
+import org.apache.commons.io.FileUtils
+import org.gradle.api.file.Directory
+import java.io.File
 
 class HotfixPlugin: BaseTransform(),Plugin<Project> {
+    private var hotfixOutputPath = ""
+    private var className = ""
     override fun apply(target: Project) {
         if (!PluginSwitch.Hotfix.isOpenHotfix(target)) {
             return
         }
         Logger.log("-----------------$name apply--------------------")
+
+        hotfixOutputPath = "${target.rootDir}${HOTFIX_OUTPUT_DIR}"
+        val dirFile = File(hotfixOutputPath)
+        if (dirFile.exists()) {
+            FileUtils.deleteDirectory(dirFile)
+        }
+        dirFile.mkdirs()
         //register transform
         var extension: BaseExtension? = null
         //App模块下能拿到AppExtension 但library执行会抛异常 不想为library单独写插件 直接try catch了
@@ -40,22 +52,35 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
         return HotfixClassVisitor(classWriter)
     }
 
+    override fun copyTargetFilePath(): String {
+        println("----------copyTargetFile:$hotfixOutputPath")
+        if(className.isNotEmpty()) {
+            return "$hotfixOutputPath/$className"
+        }
+        return ""
+    }
+
     override fun isNeedTraceClass(name: String): Boolean {
         var newName = name
         if (name.contains('/')) {
             val index = name.lastIndexOf('/') + 1
-            if (index+1 < name.length) {
+            if (index < name.length) {
                 newName = name.substring(index)
             }
         }
+        className = ""
         if(newName.endsWith(".class")) {
             newName = newName.substring(0,newName.length-6)
         }
         println("输入文件为: $newName")
-        if (newName.equals("BuildConfig.class") || newName.equals("FixTest.class")) {
+        if (newName.equals("BuildConfig") || newName.equals("FixTest")) {
+            className = "${newName}.class"
             return true
         }
         return false
     }
 
+    companion object {
+        const val HOTFIX_OUTPUT_DIR = "/hotfixOutputs/classes"
+    }
 }

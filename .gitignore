@@ -9,6 +9,7 @@
 /.idea/gradle.xml
 /.idea/assetWizardSettings.xml
 /aarrun
+/hotfixOutputs
 .DS_Store
 /build
 /captures

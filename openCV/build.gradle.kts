@@ -29,6 +29,9 @@ android  {
 
     packagingOptions {
         pickFirst("lib/arm64-v8a/libopencv_java4.so")
+        pickFirst("lib/x86_64/libopencv_java4.so")
+        pickFirst("lib/armeabi-v7a/libopencv_java4.so")
+        pickFirst("lib/x86/libopencv_java4.so")
     }
 
     sourceSets {
