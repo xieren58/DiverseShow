@@ -18,16 +18,16 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
     private var hotfixOutputPath = ""
     private var className = ""
     override fun apply(target: Project) {
-        if (!PluginSwitch.Hotfix.isOpenHotfix(target)) {
-            return
-        }
-        Logger.log("-----------------$name apply--------------------")
-
         hotfixOutputPath = "${target.rootDir}${HOTFIX_OUTPUT_DIR}"
         val dirFile = File(hotfixOutputPath)
         if (dirFile.exists()) {
             FileUtils.deleteDirectory(dirFile)
         }
+        if (!PluginSwitch.Hotfix.isOpenHotfix(target)) {
+            return
+        }
+        Logger.log("-----------------$name apply--------------------")
+
         dirFile.mkdirs()
         //register transform
         var extension: BaseExtension? = null
@@ -53,9 +53,9 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
     }
 
     override fun copyTargetFilePath(): String {
-        println("----------copyTargetFile:$hotfixOutputPath")
         if(className.isNotEmpty()) {
-            return "$hotfixOutputPath/$className"
+            println("----------copyTargetFile:${hotfixOutputPath}\\${className}")
+            return "${hotfixOutputPath}\\$className"
         }
         return ""
     }
@@ -81,6 +81,6 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
     }
 
     companion object {
-        const val HOTFIX_OUTPUT_DIR = "/hotfixOutputs/classes"
+        const val HOTFIX_OUTPUT_DIR = "\\hotfixOutputs\\classes"
     }
 }

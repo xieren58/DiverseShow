@@ -3,16 +3,15 @@ package com.four.buildsrc.hotfix
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.android.ide.common.internal.WaitableExecutor
-import org.apache.commons.codec.digest.DigestUtils
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.ClassWriter
-import org.objectweb.asm.util.CheckClassAdapter
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
+import java.io.InputStream
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 import java.util.zip.ZipEntry
@@ -176,24 +175,25 @@ abstract class BaseTransform() : Transform() {
                 val inputStream = jarFile.getInputStream(zipEntry)
                 jarOutputStream.putNextEntry(zipEntry)
                 if (isNeedTraceClass(entryName)) {
-                    /*val target = File(copyTargetFilePath())
-                    if(!target.exists()) {
-                        println("target file dose not exist!!!")
-                    }
-                    inputStream.use { input ->
-                        target.outputStream().use { output ->
-                            input.copyTo(output, DEFAULT_BUFFER_SIZE)
-                        }
-                    }*/
                     //执行插桩
                     val classReader = ClassReader(IOUtils.toByteArray(inputStream))
                     val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                     classReader.accept(getClassVisitor(classWriter), ClassReader.EXPAND_FRAMES)
                     jarOutputStream.write(classWriter.toByteArray())
+
+                    copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
+                        val target = File(this)
+                        if(target.exists()) {
+                            val className = this
+                            println("$className copyTo")
+                            jarFile.getInputStream(zipEntry).copyTo(target.outputStream())
+                        }
+                    }
                 } else {
                     jarOutputStream.write(IOUtils.toByteArray(inputStream))
                 }
                 jarOutputStream.closeEntry()
+                inputStream.close()
             }
             jarOutputStream.close()
             jarFile.close()
@@ -211,13 +211,6 @@ abstract class BaseTransform() : Transform() {
     private fun transformSingleFile(inputFile: File, destFile: File) {
         if (isNeedTraceClass(destFile.name)) {
             traceFile(inputFile, destFile)
-            copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
-                val target = File(this)
-                if(target.exists()) {
-                    FileUtils.copyFile(inputFile, target)
-                }
-            }
-
         } else {
             FileUtils.copyFile(inputFile, destFile)
         }
@@ -256,5 +249,11 @@ abstract class BaseTransform() : Transform() {
 
         inputStream.close()
         outputStream.close()
+
+        copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
+            println("copyTargetFilePath is not empty")
+            val target = File(this)
+            FileUtils.copyFile(inputFile, target)
+        }
     }
 }
