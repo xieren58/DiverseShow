@@ -183,11 +183,8 @@ abstract class BaseTransform() : Transform() {
 
                     copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
                         val target = File(this)
-                        if(target.exists()) {
-                            val className = this
-                            println("$className copyTo")
-                            jarFile.getInputStream(zipEntry).copyTo(target.outputStream())
-                        }
+                        println("$this copyTo HotfixOutputs")
+                        FileUtils.copyToFile(jarFile.getInputStream(zipEntry),target)
                     }
                 } else {
                     jarOutputStream.write(IOUtils.toByteArray(inputStream))
