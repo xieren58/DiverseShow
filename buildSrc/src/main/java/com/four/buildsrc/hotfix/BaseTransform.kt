@@ -180,17 +180,25 @@ abstract class BaseTransform() : Transform() {
                     val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                     classReader.accept(getClassVisitor(classWriter), ClassReader.EXPAND_FRAMES)
                     jarOutputStream.write(classWriter.toByteArray())
-
-                    copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
+                    /*copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
                         val target = File(this)
-                        println("$this copyTo HotfixOutputs")
-                        FileUtils.copyToFile(jarFile.getInputStream(zipEntry),target)
-                    }
+                        if(!target.exists()) {
+                            target.createNewFile()
+                        }
+                        target.outputStream().write(classWriter.toByteArray())
+                    }*/
                 } else {
                     jarOutputStream.write(IOUtils.toByteArray(inputStream))
                 }
                 jarOutputStream.closeEntry()
                 inputStream.close()
+
+                if(isNeedTraceClass(entryName)) {
+                    copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
+                        val target = File(this)
+                        FileUtils.copyToFile(jarFile.getInputStream(ZipEntry(entryName)),target)
+                    }
+                }
             }
             jarOutputStream.close()
             jarFile.close()
@@ -248,9 +256,8 @@ abstract class BaseTransform() : Transform() {
         outputStream.close()
 
         copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
-            println("copyTargetFilePath is not empty")
             val target = File(this)
-            FileUtils.copyFile(inputFile, target)
+            FileUtils.copyFile(destFile, target)
         }
     }
 }

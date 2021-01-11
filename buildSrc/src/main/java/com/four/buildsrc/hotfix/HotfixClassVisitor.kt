@@ -34,7 +34,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         fileName = source
         //为避免属性重复添加 在此执行属性添加逻辑
         //同时为了添加方法前的判断逻辑 先添加字段
-        if (!(fileName.endsWith(".kt") && isFieldExist)) {
+        if(!isFieldExist) {
             val fieldVisitor = cv.visitField(
                 Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC,
                 "changeQuickRedirect",
@@ -42,10 +42,12 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
                 null,
                 null
             )
-            val annotationVisitor = fieldVisitor.visitAnnotation(
-                "Lorg/jetbrains/annotations/Nullable;", false
-            )
-            annotationVisitor.visitEnd()
+            if (!(fileName.endsWith(".kt"))) {
+                val annotationVisitor = fieldVisitor.visitAnnotation(
+                    "Lorg/jetbrains/annotations/Nullable;", false
+                )
+                annotationVisitor.visitEnd()
+            }
             fieldVisitor.visitEnd()
             isFieldExist = true
             println("------------$owner changeQuickRedirect字段 visit注入完成----------------------")

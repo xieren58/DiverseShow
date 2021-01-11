@@ -54,13 +54,14 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
 
     override fun copyTargetFilePath(): String {
         if(className.isNotEmpty()) {
-            println("----------copyTargetFile:${hotfixOutputPath}\\${className}")
-            return "${hotfixOutputPath}\\$className"
+            println("----------copyTargetFile:${hotfixOutputPath}/${className}")
+            return "${hotfixOutputPath}/$className"
         }
         return ""
     }
 
     override fun isNeedTraceClass(name: String): Boolean {
+        className = name
         var newName = name
         if (name.contains('/')) {
             val index = name.lastIndexOf('/') + 1
@@ -68,19 +69,16 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
                 newName = name.substring(index)
             }
         }
-        className = ""
         if(newName.endsWith(".class")) {
             newName = newName.substring(0,newName.length-6)
         }
-        println("输入文件为: $newName")
         if (newName.equals("BuildConfig") || newName.equals("FixTest")) {
-            className = "${newName}.class"
             return true
         }
         return false
     }
 
     companion object {
-        const val HOTFIX_OUTPUT_DIR = "\\hotfixOutputs\\classes"
+        const val HOTFIX_OUTPUT_DIR = "/hotfixOutputs/classes"
     }
 }
