@@ -10,11 +10,17 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     classWriter
 ) {
 
+    private companion object {
+        private const val CLASS_FIX_ANNOTATION = "Lcom/ds/hotfix/HotFix;"
+        private const val METHOD_FIX_ANNOTATION = "Lcom/ds/hotfix/FixModifier;"
+        private const val METHOD_ADD_ANNOTATION = "Lcom/ds/hotfix/FixAdd;"
+    }
     private var isFieldExist: Boolean = false
     private var owner: String = ""
     private var isInterface: Boolean = false
     private var fileName: String = ""
     private var isHaveCompanion: Boolean = false
+    private var isFixClass = false
 
     override fun visit(
         version: Int,
@@ -34,45 +40,13 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         fileName = source
         //为避免属性重复添加 在此执行属性添加逻辑
         //同时为了添加方法前的判断逻辑 先添加字段
-        if(!isFieldExist) {
-            val fieldVisitor = cv.visitField(
-                Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC,
-                "changeQuickRedirect",
-                "Lcom/ds/hotfix/ChangeQuickRedirect;",
-                null,
-                null
-            )
-            if (!(fileName.endsWith(".kt"))) {
-                val annotationVisitor = fieldVisitor.visitAnnotation(
-                    "Lorg/jetbrains/annotations/Nullable;", false
-                )
-                annotationVisitor.visitEnd()
-            }
-            fieldVisitor.visitEnd()
-            isFieldExist = true
-            println("------------$owner changeQuickRedirect字段 visit注入完成----------------------")
-        }
-    }
-
-    override fun visitOuterClass(owner: String?, name: String?, descriptor: String?) {
-        super.visitOuterClass(owner, name, descriptor)
     }
 
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor {
+        if (descriptor == CLASS_FIX_ANNOTATION) {
+            isFixClass = true
+        }
         return super.visitAnnotation(descriptor, visible)
-    }
-
-    override fun visitTypeAnnotation(
-        typeRef: Int,
-        typePath: TypePath,
-        descriptor: String,
-        visible: Boolean
-    ): AnnotationVisitor {
-        return super.visitTypeAnnotation(typeRef, typePath, descriptor, visible)
-    }
-
-    override fun visitAttribute(attribute: Attribute?) {
-        super.visitAttribute(attribute)
     }
 
     override fun visitInnerClass(
@@ -107,29 +81,28 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         signature: String?,
         exceptions: Array<out String>?
     ): MethodVisitor {
-        if(name.equals("<clinit>")) {
-            val methodVisitor = classWriter.visitMethod(
-                access,
-                name,
-                descriptor,
-                signature,
-                exceptions
-            )
+        val methodVisitor = classWriter.visitMethod(
+            access,
+            name,
+            descriptor,
+            signature,
+            exceptions
+        )
+
+        if(name == "<clinit>") {
             return StaticCodeMethodVisitor(owner, api, methodVisitor, access, name, descriptor)
-        } else {
-            val methodVisitor = classWriter.visitMethod(
-                access,
-                name,
-                descriptor,
-                signature,
-                exceptions
-            )
-            return FixCheckMethodVisitor(owner, fileName, api, methodVisitor, access, name, descriptor)
         }
+
+        if (isFixClass) {
+            return FixFilterMethodVisitor(api, methodVisitor, access, name, descriptor)
+        }
+
+        return FixInjectMethodVisitor(owner, fileName, api, methodVisitor, access, name, descriptor)
     }
 
     override fun visitEnd() {
         super.visitEnd()
+        //为Kotlin文件生成Companion内部类 存放静态字段
         if(fileName.endsWith(".kt") && !isHaveCompanion) {
             println("-------visitEnd 主动生成内部类---------")
             classWriter.visitInnerClass(
@@ -140,19 +113,8 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
             )
             isHaveCompanion = true
         }
+        //kotlin文件中 生成内部类Companion引用
         if(fileName.endsWith(".kt") && isHaveCompanion) {
-            val fieldVisitor = classWriter.visitField(
-                Opcodes.ACC_PRIVATE or Opcodes.ACC_STATIC,
-                "changeQuickRedirect",
-                "Lcom/ds/hotfix/ChangeQuickRedirect;",
-                null,
-                null
-            )
-            val annotationVisitor0 =
-                fieldVisitor.visitAnnotation("Lorg/jetbrains/annotations/Nullable;", false)
-            annotationVisitor0.visitEnd()
-            fieldVisitor.visitEnd()
-
             val fieldVisitor0 = classWriter.visitField(
                 Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
                 "Companion",
@@ -162,9 +124,30 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
             )
             fieldVisitor0.visitEnd()
         }
+        //为文件注入changeQuickRedirect字段
+        if(!isFieldExist) {
+            val fieldVisitor = cv.visitField(
+                Opcodes.ACC_PUBLIC or Opcodes.ACC_STATIC,
+                "changeQuickRedirect",
+                "Lcom/ds/hotfix/ChangeQuickRedirect;",
+                null,
+                null
+            )
+            //java编码规范 可空变量使用Nullable注解标记
+            if (!fileName.endsWith(".kt")) {
+                val annotationVisitor = fieldVisitor.visitAnnotation(
+                    "Lorg/jetbrains/annotations/Nullable;", false
+                )
+                annotationVisitor.visitEnd()
+            }
+            fieldVisitor.visitEnd()
+            isFieldExist = true
+            println("------------$owner changeQuickRedirect字段 visit注入完成----------------------")
+        }
     }
 
-    class FixCheckMethodVisitor(
+    //用于热修注入字段及热修执行逻辑
+    class FixInjectMethodVisitor(
         private val owner: String,
         private val fileName: String,
         api: Int, methodVisitor: MethodVisitor,
@@ -172,7 +155,8 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     )
         : AdviceAdapter(api, methodVisitor, access, name, descriptor) {
         override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor {
-            if(descriptor.equals("Lcom/ds/hotfix/FixModifier;") || descriptor.equals("Lcom/ds/hotfix/FixAdd;")) {
+            if(descriptor == METHOD_FIX_ANNOTATION
+                || descriptor == METHOD_ADD_ANNOTATION) {
                 println("current file owner: ${owner},source: $fileName")
             }
             return super.visitAnnotation(descriptor, visible)
@@ -272,6 +256,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         }
     }
 
+    //用于注入静态字段
     class StaticCodeMethodVisitor(
         private val owner: String,
         api: Int, methodVisitor: MethodVisitor,
@@ -298,8 +283,38 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
                 "L$owner${'$'}Companion;"
             )
             mv.visitInsn(RETURN)
-            mv.visitMaxs(3, 0);
+            mv.visitMaxs(3, 0)
             mv.visitEnd()
         }
+    }
+
+    //用于热修包删除多余方法 保留修复方法及新增方法
+    class FixFilterMethodVisitor(api: Int,
+                                 methodVisitor: MethodVisitor,
+                                 access: Int,
+                                 name: String,
+                                 descriptor: String
+    ) : MethodVisitor(api, methodVisitor) {
+        private var isFixFilter = false
+        override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
+            if (descriptor == METHOD_FIX_ANNOTATION || descriptor == METHOD_ADD_ANNOTATION) {
+                isFixFilter = true
+                return super.visitAnnotation(descriptor, visible)
+            }
+            return null
+        }
+
+        override fun visitMethodInsn(
+            opcode: Int,
+            owner: String?,
+            name: String?,
+            descriptor: String?,
+            isInterface: Boolean
+        ) {
+            if (!isFixFilter) {
+                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+            }
+        }
+
     }
 }

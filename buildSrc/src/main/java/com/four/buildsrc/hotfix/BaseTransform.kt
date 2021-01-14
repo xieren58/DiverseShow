@@ -180,32 +180,21 @@ abstract class BaseTransform() : Transform() {
                     val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                     classReader.accept(getClassVisitor(classWriter), ClassReader.EXPAND_FRAMES)
                     jarOutputStream.write(classWriter.toByteArray())
-                    /*copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
+                    copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
                         val target = File(this)
-                        if(!target.exists()) {
-                            target.createNewFile()
-                        }
-                        target.outputStream().write(classWriter.toByteArray())
-                    }*/
+                        FileUtils.copyFile(dest,target)
+                    }
                 } else {
                     jarOutputStream.write(IOUtils.toByteArray(inputStream))
                 }
                 jarOutputStream.closeEntry()
                 inputStream.close()
-
-                if(isNeedTraceClass(entryName)) {
-                    copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
-                        val target = File(this)
-                        FileUtils.copyToFile(jarFile.getInputStream(ZipEntry(entryName)),target)
-                    }
-                }
             }
             jarOutputStream.close()
             jarFile.close()
         } else {
             FileUtils.copyFile(jarInput.file,dest)
         }
-
     }
 
     //用于筛选jar处理的范围 这里目前只处理多模块下的java/kotlin文件生成的jar

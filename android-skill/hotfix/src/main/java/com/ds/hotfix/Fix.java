@@ -3,7 +3,7 @@ package com.ds.hotfix;
 import android.util.Log;
 
 
-
+@HotFix
 public class Fix {
     public static ChangeQuickRedirect changeQuickRedirect;
     @FixModifier
