@@ -7,6 +7,7 @@ import java.io.IOException
 object FileUtil {
 
     fun copyFileByOverlay(targetPath: String, copyPath: String) {
+        println("------------------targetPath:${targetPath} copyPath:${copyPath} ---------------------")
         generateFileSafely(targetPath)
         val copyFile = File(copyPath)
         if (!copyFile.exists()) {

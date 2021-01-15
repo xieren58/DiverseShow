@@ -42,7 +42,8 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         //同时为了添加方法前的判断逻辑 先添加字段
     }
 
-    override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor {
+    override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
+        println("visitAnnotation: $descriptor")
         if (descriptor == CLASS_FIX_ANNOTATION) {
             isFixClass = true
         }
@@ -56,7 +57,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         access: Int
     ) {
         super.visitInnerClass(name, outerName, innerName, access)
-        if (innerName.equals("companion")) {
+        if (innerName == "companion") {
             isHaveCompanion = true
         }
     }
@@ -68,7 +69,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         signature: String?,
         value: Any?
     ): FieldVisitor {
-        if (name.equals("changeQuickRedirect")) {
+        if (name == "changeQuickRedirect") {
             isFieldExist = true
         }
         return super.visitField(access, name, descriptor, signature, value)
@@ -80,7 +81,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         descriptor: String,
         signature: String?,
         exceptions: Array<out String>?
-    ): MethodVisitor {
+    ): MethodVisitor? {
         val methodVisitor = classWriter.visitMethod(
             access,
             name,
@@ -297,6 +298,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     ) : MethodVisitor(api, methodVisitor) {
         private var isFixFilter = false
         override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
+            println("FixFilterMethodVisitor visitAnnotation:$descriptor")
             if (descriptor == METHOD_FIX_ANNOTATION || descriptor == METHOD_ADD_ANNOTATION) {
                 isFixFilter = true
                 return super.visitAnnotation(descriptor, visible)

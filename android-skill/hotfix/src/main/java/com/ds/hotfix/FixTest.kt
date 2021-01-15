@@ -7,7 +7,7 @@ class FixTest {
 
     @FixModifier
     fun test() {
-
+        Log.d("tag","test invoke")
     }
 
     fun launchFixTest(context: Context) {

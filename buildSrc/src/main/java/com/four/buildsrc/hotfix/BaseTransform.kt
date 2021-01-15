@@ -51,12 +51,6 @@ abstract class BaseTransform() : Transform() {
 
     abstract fun getClassVisitor(classWriter: ClassWriter): ClassVisitor
 
-    private val mWaitableExecutor by lazy {
-        WaitableExecutor.useGlobalSharedThreadPool().apply {
-            waitForTasksWithQuickFail<Any>(true)
-        }
-    }
-
     override fun transform(transformInvocation: TransformInvocation) {
         println("-----------------$name start--------------------")
         super.transform(transformInvocation)
@@ -65,22 +59,17 @@ abstract class BaseTransform() : Transform() {
         val isIncremental = transformInvocation.isIncremental
 
         transformInvocation.inputs.forEach { input ->
-            input.directoryInputs.forEach { directoryInput ->
+            input.directoryInputs.parallelStream().forEach { directoryInput ->
                 //处理源码文件
-                mWaitableExecutor.execute {
-                    processDirectoryInput(directoryInput, transformOutputProvider,isIncremental)
-                }
+                processDirectoryInput(directoryInput, transformOutputProvider,isIncremental)
             }
 
-            input.jarInputs.forEach { jarInput ->
+            input.jarInputs.parallelStream().forEach { jarInput ->
                 //处理jar
-                mWaitableExecutor.execute {
-                    processJarInput(jarInput, transformOutputProvider,isIncremental)
-                }
+                processJarInput(jarInput, transformOutputProvider,isIncremental)
             }
 
         }
-        mWaitableExecutor.waitForTasksWithQuickFail<Any>(true)
         val currTime = System.currentTimeMillis()
         println("-----------------$name 执行耗时为 ${(currTime - startTime) / 1000.00} s--------------------")
     }
@@ -166,9 +155,7 @@ abstract class BaseTransform() : Transform() {
             val jarFileEntries = jarFile.entries()
 
             val jarOutputStream = JarOutputStream(FileOutputStream(dest))
-
-            while (jarFileEntries.hasMoreElements()) {
-                val jarEntry = jarFileEntries.nextElement()
+            jarFileEntries.iterator().forEach { jarEntry ->
                 val entryName = jarEntry.name
                 val zipEntry = ZipEntry(entryName)
                 //读取jar中的输入流
@@ -189,6 +176,7 @@ abstract class BaseTransform() : Transform() {
                 }
                 jarOutputStream.closeEntry()
                 inputStream.close()
+
             }
             jarOutputStream.close()
             jarFile.close()
