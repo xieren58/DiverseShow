@@ -43,7 +43,6 @@ dependencies {
     androidTestImpl(Dep.junitExt)
     androidTestImpl(Dep.espressoCore)
 
-    implProject(Dep.openCVProject)
     implProject(Dep.commonBaseProject)
     implProject(Dep.apiWeatherProject)
     implProject(Dep.skillHotfixProject)

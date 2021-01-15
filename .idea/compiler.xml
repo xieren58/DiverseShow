@@ -1,19 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
-    <bytecodeTargetLevel target="1.7">
-      <module name="DiverseShow.android-skill.hotfix" target="1.8" />
-      <module name="DiverseShow.android-skill.plugins" target="1.8" />
-      <module name="DiverseShow.app" target="1.8" />
-      <module name="DiverseShow.buildSrc" target="1.8" />
-      <module name="DiverseShow.components.api.api-weather" target="1.8" />
-      <module name="DiverseShow.components.base" target="1.8" />
-      <module name="DiverseShow.components.common-map" target="1.8" />
-      <module name="DiverseShow.components.common-net" target="1.8" />
-      <module name="DiverseShow.components.common-util" target="1.8" />
-      <module name="DiverseShow.features.ds-home" target="1.8" />
-      <module name="DiverseShow.features.ds-weather" target="1.8" />
-      <module name="DiverseShow.global.ds-app" target="1.8" />
+    <bytecodeTargetLevel target="1.8">
       <module name="DiverseShow.global.lib-init.app-init-transform" target="1.8" />
       <module name="DiverseShow.openCV" target="1.8" />
     </bytecodeTargetLevel>
