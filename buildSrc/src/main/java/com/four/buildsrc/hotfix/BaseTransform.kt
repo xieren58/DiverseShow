@@ -169,7 +169,10 @@ abstract class BaseTransform() : Transform() {
                     jarOutputStream.write(classWriter.toByteArray())
                     copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
                         val target = File(this)
-                        FileUtils.copyFile(dest,target)
+                        target.parentFile.mkdirs()
+                        target.outputStream().use {
+                            it.write(classWriter.toByteArray())
+                        }
                     }
                 } else {
                     jarOutputStream.write(IOUtils.toByteArray(inputStream))
@@ -187,7 +190,7 @@ abstract class BaseTransform() : Transform() {
 
     //用于筛选jar处理的范围 这里目前只处理多模块下的java/kotlin文件生成的jar
     protected open fun isJarInputNeedTrace(fileName: String): Boolean {
-        return fileName.equals("classes.jar")
+        return fileName == "classes.jar"
     }
 
     private fun transformSingleFile(inputFile: File, destFile: File) {

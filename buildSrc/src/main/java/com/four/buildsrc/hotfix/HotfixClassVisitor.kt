@@ -81,7 +81,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         descriptor: String,
         signature: String?,
         exceptions: Array<out String>?
-    ): MethodVisitor? {
+    ): MethodVisitor {
         val methodVisitor = classWriter.visitMethod(
             access,
             name,
