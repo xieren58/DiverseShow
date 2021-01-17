@@ -49,6 +49,12 @@ abstract class BaseTransform() : Transform() {
 
     protected var isLibraryModule: Boolean = false
 
+    private val mWaitableExecutor by lazy {
+        WaitableExecutor.useGlobalSharedThreadPool().apply {
+            waitForTasksWithQuickFail<Any>(true)
+        }
+    }
+
     abstract fun getClassVisitor(classWriter: ClassWriter): ClassVisitor
 
     override fun transform(transformInvocation: TransformInvocation) {
@@ -59,17 +65,22 @@ abstract class BaseTransform() : Transform() {
         val isIncremental = transformInvocation.isIncremental
 
         transformInvocation.inputs.forEach { input ->
-            input.directoryInputs.parallelStream().forEach { directoryInput ->
+            input.directoryInputs.forEach { directoryInput ->
                 //处理源码文件
-                processDirectoryInput(directoryInput, transformOutputProvider,isIncremental)
+                mWaitableExecutor.execute {
+                    processDirectoryInput(directoryInput, transformOutputProvider,isIncremental)
+                }
             }
 
-            input.jarInputs.parallelStream().forEach { jarInput ->
+            input.jarInputs.forEach { jarInput ->
                 //处理jar
-                processJarInput(jarInput, transformOutputProvider,isIncremental)
+                mWaitableExecutor.execute {
+                    processJarInput(jarInput, transformOutputProvider,isIncremental)
+                }
             }
 
         }
+        mWaitableExecutor.waitForTasksWithQuickFail<Any>(true)
         val currTime = System.currentTimeMillis()
         println("-----------------$name 执行耗时为 ${(currTime - startTime) / 1000.00} s--------------------")
     }
