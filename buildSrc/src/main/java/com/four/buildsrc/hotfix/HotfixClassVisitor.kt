@@ -3,6 +3,7 @@ package com.four.buildsrc.hotfix
 
 import org.objectweb.asm.*
 import org.objectweb.asm.commons.AdviceAdapter
+import java.util.*
 
 
 class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
@@ -21,6 +22,9 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     private var fileName: String = ""
     private var isHaveCompanion: Boolean = false
     private var isFixClass = false
+    private val classSets: HashSet<String> by lazy {
+        HashSet<String>()
+    }
 
     override fun visit(
         version: Int,
@@ -43,7 +47,6 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     }
 
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
-        println("visitAnnotation: $descriptor")
         if (descriptor == CLASS_FIX_ANNOTATION) {
             isFixClass = true
         }
@@ -94,7 +97,7 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         val methodVisitor = classWriter.visitMethod(access, name, descriptor, signature, exceptions)
 
         if (isFixClass) {
-            return FixFilterMethodVisitor(api, methodVisitor, access, name, descriptor)
+            return FixFilterMethodVisitor(classSets, api, methodVisitor, access, name, descriptor)
         }
         if (name == "<clinit>") {
             return StaticCodeMethodVisitor(owner, api, methodVisitor, access, name, descriptor)
@@ -270,33 +273,33 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     }
 
     //用于热修包删除多余方法 保留修复方法及新增方法
-    class FixFilterMethodVisitor(api: Int,
+    class FixFilterMethodVisitor(private val set: HashSet<String>,
+                                 api: Int,
                                  methodVisitor: MethodVisitor,
                                  access: Int,
                                  name: String,
                                  descriptor: String
     ) : MethodVisitor(api, methodVisitor) {
         private var isFixFilter = false
-        override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
-            println("FixFilterMethodVisitor visitAnnotation:$descriptor")
+        override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor {
+            isFixFilter = false
             if (descriptor == METHOD_FIX_ANNOTATION || descriptor == METHOD_ADD_ANNOTATION) {
                 isFixFilter = true
-                return super.visitAnnotation(descriptor, visible)
             }
-            return null
+            return super.visitAnnotation(descriptor, visible)
         }
 
         override fun visitMethodInsn(
             opcode: Int,
             owner: String?,
             name: String?,
-            descriptor: String?,
+            descriptor: String,
             isInterface: Boolean
         ) {
-            if (!isFixFilter) {
-                super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+            super.visitMethodInsn(opcode, owner, name, descriptor, isInterface)
+            if (isFixFilter) {
+                set.add(descriptor)
             }
         }
-
     }
 }
