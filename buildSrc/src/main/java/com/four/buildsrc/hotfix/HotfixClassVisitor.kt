@@ -87,49 +87,49 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
                 "name:$name \n" +
                 "descriptor:$descriptor \n" +
                 "signature:$signature")
-        val methodVisitor = classWriter.visitMethod(
-            access,
-            name,
-            descriptor,
-            signature,
-            exceptions
-        )
 
-        if(name == "<clinit>") {
-            return StaticCodeMethodVisitor(owner, api, methodVisitor, access, name, descriptor)
+        if (name == "<clinit>" && !fileName.endsWith(".kt")) {
+            return super.visitMethod(access, name, descriptor, signature, exceptions)
         }
+        val methodVisitor = classWriter.visitMethod(access, name, descriptor, signature, exceptions)
 
         if (isFixClass) {
             return FixFilterMethodVisitor(api, methodVisitor, access, name, descriptor)
         }
-
+        if (name == "<clinit>") {
+            return StaticCodeMethodVisitor(owner, api, methodVisitor, access, name, descriptor)
+        }
         return FixInjectMethodVisitor(owner, fileName, api, methodVisitor, access, name, descriptor)
     }
 
     override fun visitEnd() {
         super.visitEnd()
         //为Kotlin文件生成Companion内部类 存放静态字段
-        if(fileName.endsWith(".kt") && !isHaveCompanion) {
-            println("-------visitEnd 主动生成内部类---------")
-            classWriter.visitInnerClass(
-                "$owner${'$'}Companion",
-                owner,
-                "Companion",
-                Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC
-            )
-            isHaveCompanion = true
+        if(fileName.endsWith(".kt")) {
+            if (!isHaveCompanion) {
+                println("-------visitEnd 主动生成内部类---------")
+                classWriter.visitInnerClass(
+                    "$owner${'$'}Companion",
+                    owner,
+                    "Companion",
+                    Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC
+                )
+                isHaveCompanion = true
+            }
+
+            //kotlin文件中 生成内部类Companion引用
+            if (isHaveCompanion) {
+                val fieldVisitor0 = classWriter.visitField(
+                    Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
+                    "Companion",
+                    "L$owner${'$'}Companion;",
+                    null,
+                    null
+                )
+                fieldVisitor0.visitEnd()
+            }
         }
-        //kotlin文件中 生成内部类Companion引用
-        if(fileName.endsWith(".kt") && isHaveCompanion) {
-            val fieldVisitor0 = classWriter.visitField(
-                Opcodes.ACC_PUBLIC or Opcodes.ACC_FINAL or Opcodes.ACC_STATIC,
-                "Companion",
-                "L$owner${'$'}Companion;",
-                null,
-                null
-            )
-            fieldVisitor0.visitEnd()
-        }
+
         //为文件注入changeQuickRedirect字段
         if(!isFieldExist) {
             val fieldVisitor = cv.visitField(
@@ -160,35 +160,10 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         access: Int, name: String, descriptor: String
     )
         : AdviceAdapter(api, methodVisitor, access, name, descriptor) {
-        override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor {
-            if(descriptor == METHOD_FIX_ANNOTATION
-                || descriptor == METHOD_ADD_ANNOTATION) {
-                println("current file owner: ${owner},source: $fileName")
-            }
-            return super.visitAnnotation(descriptor, visible)
-        }
 
         override fun onMethodEnter() {
             super.onMethodEnter()
             println("------------changeQuickRedirect 方法内判空执行----------------------")
-            val label = Label()
-            mv.visitLabel(label)
-            mv.visitLineNumber(10, label)
-            mv.visitTypeInsn(NEW, "com/ds/hotfix/FixProxy")
-            mv.visitInsn(DUP)
-            mv.visitMethodInsn(
-                INVOKESPECIAL,
-                "com/ds/hotfix/FixProxy",
-                "<init>",
-                "()V",
-                false
-            )
-            mv.visitFieldInsn(
-                PUTSTATIC,
-                owner,
-                "changeQuickRedirect",
-                "Lcom/ds/hotfix/ChangeQuickRedirect;"
-            )
             val label0 = Label()
             mv.visitLabel(label0)
             mv.visitFieldInsn(
