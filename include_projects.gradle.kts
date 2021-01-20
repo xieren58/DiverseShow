@@ -21,6 +21,7 @@ val allProjects = arrayOf(
  */
 val defProjects = arrayOf(
     ":app"//,
+
 //   因为这三个module是按照maven库的形式依赖，库和module同时会生产xxx.kotlin_module文件造成build失败
 //   所以把它们注释掉，需要看源码可以打开，然后sync now
 //    ":global:lib-init:app-init-handler",

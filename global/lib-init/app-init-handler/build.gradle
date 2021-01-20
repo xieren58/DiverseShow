@@ -19,6 +19,6 @@ uploadArchives {
         repository(url: uri("${rootDir}/repo"))
         pom.groupId = "com.ds.app_init"
         pom.artifactId = "handler"
-        pom.version = "1.0.7"
+        pom.version = "1.0.8"
     }
 }

@@ -52,9 +52,9 @@ object Dep {
 //    const val globalInitProcessorProject = ":global:lib-init:app-init-processor"
 //    const val globalInitTransformProject = ":global:lib-init:app-init-transform"
     //这三个模块被发布到本地了
-    const val globalInitHandler = "com.ds.app_init:handler:1.0.7"
-    const val globalInitProcessor = "com.ds.app_init:processor:1.0.7"
-    const val globalInitTransform  = "com.ds.app_init:transform:1.0.7"
+    const val globalInitHandler = "com.ds.app_init:handler:1.0.8"
+    const val globalInitProcessor = "com.ds.app_init:processor:1.0.8"
+    const val globalInitTransform  = "com.ds.app_init:transform:1.0.8"
 
     const val featureHomeProject = ":features:ds-home"
     const val featureWeatherProject = ":features:ds-weather"

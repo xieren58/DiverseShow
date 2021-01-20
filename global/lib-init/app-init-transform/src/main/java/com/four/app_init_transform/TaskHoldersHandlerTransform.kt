@@ -1,10 +1,7 @@
 package com.four.app_init_transform
 
 import com.android.SdkConstants
-import com.android.build.api.transform.Format
-import com.android.build.api.transform.QualifiedContent
-import com.android.build.api.transform.Transform
-import com.android.build.api.transform.TransformInvocation
+import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
 import com.four.app_init_handler.StringConstant
 import com.four.app_init_handler.abs.AbsTask
@@ -21,12 +18,16 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 import java.util.jar.JarFile
 
 open class TaskHoldersHandlerTransform : Transform() {
 
     companion object {
         const val NAME = "AppInit"
+
+        private val executor = Executors.newFixedThreadPool(6)
     }
 
     override fun getName(): String = NAME
@@ -46,46 +47,23 @@ open class TaskHoldersHandlerTransform : Transform() {
         val prefix = "${StringConstant.APP_INIT_CLASS_PCK
             .replace('.', File.separatorChar)}${File.separator}${StringConstant.TASK_HOLDER_PREFIX}"
 
+        val taskOverCount = AtomicInteger(0)
+        var taskCount = 0
         invocation.inputs.forEach {
             //并发流处理
-            it.jarInputs.parallelStream().forEach { jar ->
-                val src: File = jar.file
-                val dest: File = invocation.outputProvider.getContentLocation(
-                    jar.name, jar.contentTypes, jar.scopes, Format.JAR
-                )
-                val jarFile = JarFile(src)
-                jarFile.entries().iterator().forEach { entry ->
-                    val name = entry.name
-                    if (name.startsWith(prefix) && !name.endsWith("Companion${SdkConstants.DOT_CLASS}")) {
-                        val target = getJavaNameFromClassName(entry.name)
-                        initClassSet.add(target)
-                        Logger.d("找到 $target")
-                    }
-                }
-                FileUtils.copyFile(src, dest)
-            }
+            taskCount += handleJarsSync(it.jarInputs, invocation, prefix, initClassSet, taskOverCount)
             //并发流处理
-            it.directoryInputs.parallelStream().forEach { dir ->
-                val src: File = dir.file
-                val dest = invocation.outputProvider.getContentLocation(
-                    dir.name, dir.contentTypes, dir.scopes, Format.DIRECTORY
-                )
-                val pck = File(src, StringConstant.APP_INIT_CLASS_PCK.replace('.', File.separatorChar))
-                if (pck.exists() && pck.isDirectory) {
-                    val files = FileUtils.listFiles(pck,
-                        SuffixFileFilter(SdkConstants.DOT_CLASS, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
-                    files.forEach { file ->
-                        val path = file.absolutePath.replace("${src.absolutePath}${File.separatorChar}", "")
-                        if (path.startsWith(prefix) && !path.endsWith("Companion${SdkConstants.DOT_CLASS}")) {
-                            val target = getJavaNameFromClassName(path)
-                            initClassSet.add(target)
-                            Logger.d("找到 $target")
-                        }
-                    }
-                }
-                FileUtils.copyDirectory(src, dest)
+            taskCount += handleDirsSync(it.directoryInputs, invocation, prefix, initClassSet, taskOverCount)
+        }
+
+        val loopStart = System.currentTimeMillis()
+        while (taskCount != taskOverCount.get()) {
+            //空转就好，因为扫描是非常省时的
+            if (System.currentTimeMillis() - loopStart > 3000) {
+                throw RuntimeException("loop timeout !!!")
             }
         }
+
         Logger.d("扫描时长 ${(System.currentTimeMillis() - startTime).toFloat()/1000f}s")
         val dest = invocation.outputProvider.getContentLocation(
             StringConstant.TASK_HOLDERS_HANDLER_NAME, TransformManager.CONTENT_CLASS,
@@ -134,5 +112,63 @@ open class TaskHoldersHandlerTransform : Transform() {
         } catch (e: IOException) {
             throw e
         }
+    }
+
+    private fun handleJarsSync(jars: Collection<JarInput>,
+                               invocation: TransformInvocation,
+                               prefix: String,
+                               initClassSet: MutableSet<String>,
+                               taskOverCount: AtomicInteger): Int {
+        jars.forEach { jar ->
+            executor.submit {
+                val src: File = jar.file
+                val dest: File = invocation.outputProvider.getContentLocation(
+                    jar.name, jar.contentTypes, jar.scopes, Format.JAR
+                )
+                val jarFile = JarFile(src)
+                jarFile.entries().iterator().forEach { entry ->
+                    val name = entry.name
+                    if (name.startsWith(prefix) && !name.endsWith("Companion${SdkConstants.DOT_CLASS}")) {
+                        val target = getJavaNameFromClassName(entry.name)
+                        initClassSet.add(target)
+                        Logger.d("找到 $target")
+                    }
+                }
+                FileUtils.copyFile(src, dest)
+                taskOverCount.getAndIncrement()
+            }
+        }
+        return jars.size
+    }
+
+    private fun handleDirsSync(directoryInputs: Collection<DirectoryInput>,
+                               invocation: TransformInvocation,
+                               prefix: String,
+                               initClassSet: MutableSet<String>,
+                               taskOverCount: AtomicInteger): Int {
+        directoryInputs.forEach { dir ->
+            executor.submit {
+                val src: File = dir.file
+                val dest = invocation.outputProvider.getContentLocation(
+                    dir.name, dir.contentTypes, dir.scopes, Format.DIRECTORY
+                )
+                val pck = File(src, StringConstant.APP_INIT_CLASS_PCK.replace('.', File.separatorChar))
+                if (pck.exists() && pck.isDirectory) {
+                    val files = FileUtils.listFiles(pck,
+                        SuffixFileFilter(SdkConstants.DOT_CLASS, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
+                    files.forEach { file ->
+                        val path = file.absolutePath.replace("${src.absolutePath}${File.separatorChar}", "")
+                        if (path.startsWith(prefix) && !path.endsWith("Companion${SdkConstants.DOT_CLASS}")) {
+                            val target = getJavaNameFromClassName(path)
+                            initClassSet.add(target)
+                            Logger.d("找到 $target")
+                        }
+                    }
+                }
+                FileUtils.copyDirectory(src, dest)
+                taskOverCount.getAndIncrement()
+            }
+        }
+        return directoryInputs.size
     }
 }

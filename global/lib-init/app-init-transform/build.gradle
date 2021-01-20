@@ -24,7 +24,7 @@ dependencies {
     implementation("com.android.tools.build:gradle:4.1.1")
 
     //必须使用api依赖
-    api("com.ds.app_init:handler:1.0.7")
+    api("com.ds.app_init:handler:1.0.8")
     //implementation(project(":global:lib-init:app-init-handler"))
 }
 
@@ -33,6 +33,6 @@ uploadArchives {
         repository(url: uri("${rootDir}/repo"))
         pom.groupId = "com.ds.app_init"
         pom.artifactId = "transform"
-        pom.version = "1.0.7"
+        pom.version = "1.0.8"
     }
 }

@@ -7,9 +7,7 @@ import org.gradle.api.Project
 
 class AppInitPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        println("register TaskHoldersHandlerTransform..")
         target.extensions.getByType(BaseExtension::class.java).registerTransform(TaskHoldersHandlerTransform())
         println("register TaskHoldersHandlerTransform..")
-
     }
 }
