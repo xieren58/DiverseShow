@@ -5,26 +5,20 @@ import org.objectweb.asm.*
 import org.objectweb.asm.commons.AdviceAdapter
 import java.util.*
 
-
+/**
+ * 普通扫描完成fix字段及逻辑注入
+ * 记录含有热修相关类的注解标注方法签名信息
+ * 热修patch包生成完成一次扫描 根据保留的类信息 删除类中信息 保留注解标注的方法 打包成patch
+ */
 class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     Opcodes.ASM8,
     classWriter
 ) {
-
-    private companion object {
-        private const val CLASS_FIX_ANNOTATION = "Lcom/ds/hotfix/HotFix;"
-        private const val METHOD_FIX_ANNOTATION = "Lcom/ds/hotfix/FixModifier;"
-        private const val METHOD_ADD_ANNOTATION = "Lcom/ds/hotfix/FixAdd;"
-    }
     private var isFieldExist: Boolean = false
     private var owner: String = ""
     private var isInterface: Boolean = false
     private var fileName: String = ""
     private var isHaveCompanion: Boolean = false
-    private var isFixClass = false
-    private val classSets: HashSet<String> by lazy {
-        HashSet<String>()
-    }
 
     override fun visit(
         version: Int,
@@ -47,9 +41,6 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
     }
 
     override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor? {
-        if (descriptor == CLASS_FIX_ANNOTATION) {
-            isFixClass = true
-        }
         return super.visitAnnotation(descriptor, visible)
     }
 
@@ -96,9 +87,6 @@ class HotfixClassVisitor(private val classWriter: ClassWriter): ClassVisitor(
         }
         val methodVisitor = classWriter.visitMethod(access, name, descriptor, signature, exceptions)
 
-        if (isFixClass) {
-            return FixFilterMethodVisitor(classSets, api, methodVisitor, access, name, descriptor)
-        }
         if (name == "<clinit>") {
             return StaticCodeMethodVisitor(owner, api, methodVisitor, access, name, descriptor)
         }

@@ -44,13 +44,13 @@ class HotfixPlugin: BaseTransform(),Plugin<Project> {
         return HotfixClassVisitor(classWriter)
     }
 
-    override fun copyTargetFilePath(): String {
+    /*override fun copyTargetFilePath(): String {
         if(className.isNotEmpty()) {
             println("----------copyTargetFile:${hotfixOutputPath}${File.separator}${className}")
             return "${hotfixOutputPath}${File.separator}$className"
         }
         return ""
-    }
+    }*/
 
     override fun isNeedTraceClass(name: String): Boolean {
         className = name.replace('/',File.separatorChar)

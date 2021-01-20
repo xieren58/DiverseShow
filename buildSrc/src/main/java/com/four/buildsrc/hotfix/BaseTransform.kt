@@ -158,7 +158,7 @@ abstract class BaseTransform() : Transform() {
         }
     }
 
-    abstract fun copyTargetFilePath() : String
+    //abstract fun copyTargetFilePath() : String
 
     private fun transformJar(jarInput: JarInput, dest: File) {
         if(isJarInputNeedTrace(jarInput.file.name)) {
@@ -178,13 +178,13 @@ abstract class BaseTransform() : Transform() {
                     val classWriter = ClassWriter(classReader, ClassWriter.COMPUTE_MAXS)
                     classReader.accept(getClassVisitor(classWriter), ClassReader.EXPAND_FRAMES)
                     jarOutputStream.write(classWriter.toByteArray())
-                    copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
+                    /*copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
                         val target = File(this)
                         target.parentFile.mkdirs()
                         target.outputStream().use {
                             it.write(classWriter.toByteArray())
                         }
-                    }
+                    }*/
                 } else {
                     jarOutputStream.write(IOUtils.toByteArray(inputStream))
                 }
@@ -246,9 +246,9 @@ abstract class BaseTransform() : Transform() {
         inputStream.close()
         outputStream.close()
 
-        copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
+        /*copyTargetFilePath().takeIf { it.isNotEmpty() }?.apply {
             val target = File(this)
             FileUtils.copyFile(destFile, target)
-        }
+        }*/
     }
 }

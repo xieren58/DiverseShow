@@ -1,5 +1,6 @@
 package com.four.buildsrc.hotfix
 
+import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.Label
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.commons.AdviceAdapter
@@ -9,9 +10,21 @@ class FixInjectMethodVisitor(
     private val owner: String,
     private val fileName: String,
     api: Int, methodVisitor: MethodVisitor,
-    access: Int, name: String, descriptor: String
+    access: Int, name: String, private val descriptor: String
 )
     : AdviceAdapter(api, methodVisitor, access, name, descriptor) {
+
+    private companion object {
+        private const val METHOD_FIX_ANNOTATION = "Lcom/ds/hotfix/FixModifier;"
+        private const val METHOD_ADD_ANNOTATION = "Lcom/ds/hotfix/FixAdd;"
+    }
+
+    override fun visitAnnotation(descriptor: String, visible: Boolean): AnnotationVisitor {
+        if (descriptor == METHOD_FIX_ANNOTATION || descriptor == METHOD_ADD_ANNOTATION) {
+            ClassInfo.classSets.add(this.descriptor)
+        }
+        return super.visitAnnotation(descriptor, visible)
+    }
 
     override fun onMethodEnter() {
         super.onMethodEnter()
