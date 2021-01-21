@@ -4,6 +4,7 @@ plugins {
     id("com.android.library")
     id("kotlin-android")
     id("kotlin-android-extensions")
+    kotlin("kapt")
 }
 
 android  {
@@ -39,4 +40,7 @@ dependencies {
 
     apiJar(files("${project.projectDir}/libs/AMap2DMap_6.0.0_AMapSearch_7.7.0_AMapLocation_5.2.0_20201027.jar"))
     implProject(Dep.commonUtilProject)
+
+    implRepo(Dep.globalInitHandler)
+    kaptRepo(Dep.globalInitProcessor)
 }

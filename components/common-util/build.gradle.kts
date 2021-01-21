@@ -45,4 +45,5 @@ dependencies {
     apiProject(Dep.globalProject)
 
     implRepo(Dep.globalInitHandler)
-    kaptRepo(Dep.globalInitProcessor)}
+    kaptRepo(Dep.globalInitProcessor)
+}

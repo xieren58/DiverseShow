@@ -14,17 +14,17 @@ class WeatherModel : ViewModel() {
 
     val dayLiveData = MutableLiveData<DayWeatherBean>()
 
-    fun requestWeekWeather(lifecycle: Lifecycle) {
+    fun requestWeekWeather(lifecycle: Lifecycle, name: String) {
         WeatherHelper.client
-            .getWeekWeather("北京")
+            .getWeekWeather(name)
             .ioToUiAndAutoDispose(lifecycle, {
             weekLiveData.value = it
         })
     }
 
-    fun requestDayWeather(lifecycle: Lifecycle) {
+    fun requestDayWeather(lifecycle: Lifecycle, name: String) {
         WeatherHelper.client
-            .getDayWeather("北京")
+            .getDayWeather(name)
             .ioToUiAndAutoDispose(lifecycle, {
             dayLiveData.value = it
         })

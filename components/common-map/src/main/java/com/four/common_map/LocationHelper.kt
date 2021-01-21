@@ -1,9 +1,14 @@
 package com.four.common_map
 
+import android.app.Application
 import androidx.lifecycle.*
 import com.amap.api.location.AMapLocation
 import com.ds.global.DSApplication
+import com.four.app_init_handler.api.AppLifeEvent
+import com.four.app_init_handler.api.AppLifeEventInt
+import com.four.app_init_handler.api.OnAppLifeChanged
 import com.four.common_util.log.DSLog
+import io.reactivex.schedulers.Schedulers
 
 object LocationHelper {
 
@@ -13,17 +18,24 @@ object LocationHelper {
     //为空则请求失败
     val normalLocationLiveData = MutableLiveData<AMapLocation?>()
 
-    private val locationManager = LocationManager(DSApplication.instance, exactLocationLiveData, normalLocationLiveData)
+    private lateinit var locationManager: LocationManager
 
-    fun requestExactLocation(lifecycleOwner: LifecycleOwner, observer: Observer<AMapLocation?>) {
-        DSLog.map().debug("observe exact location, $lifecycleOwner")
-        exactLocationLiveData.observe(lifecycleOwner, observer)
+    fun requestExactLocation() {
+        DSLog.map().debug("request exact location")
         locationManager.requestExactLocation()
     }
 
-    fun requestNormalLocation(lifecycleOwner: LifecycleOwner, observer: Observer<AMapLocation?>) {
-        DSLog.map().debug("observe normal location,  $lifecycleOwner")
-        normalLocationLiveData.observe(lifecycleOwner, observer)
+    fun requestNormalLocation() {
+        DSLog.map().debug("request normal location")
         locationManager.requestNormalLocation()
+    }
+
+    //初始化定位
+    @OnAppLifeChanged(AppLifeEvent.ON_CREATE)
+    fun init(app: Application) {
+        Schedulers.computation().scheduleDirect {
+            locationManager = LocationManager(app, exactLocationLiveData, normalLocationLiveData)
+            requestExactLocation()
+        }
     }
 }

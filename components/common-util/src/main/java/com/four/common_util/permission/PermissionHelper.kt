@@ -156,5 +156,5 @@ object PermissionHelper {
         fun onShowToast()
     }
 
-    private class CallbackWithCode(var callback: Callback?, val code: Int, var isUseful: Boolean = false)
+    private class CallbackWithCode(var callback: Callback?, val code: Int, var isUseful: Boolean = true)
 }

@@ -34,11 +34,7 @@ class WeatherController(context: Context, val activity: FragmentActivity): BaseC
                 Manifest.permission.ACCESS_FINE_LOCATION
             ),
             object : PermissionHelper.Callback {
-                override fun onGranted() {
-                    LocationHelper.requestExactLocation(lifecycleOwner) {
-                        DSLog.d("get location ${it?.city}")
-                    }
-                }
+                override fun onGranted() { }
 
                 override fun onDenied(deniedPermissions: List<String>) {
                     DSLog.def().info("申请权限被拒绝")
@@ -56,16 +52,21 @@ class WeatherController(context: Context, val activity: FragmentActivity): BaseC
 
     @SuppressLint("SetTextI18n")
     private fun requestData() {
-        viewModel?.apply {
-            weekLiveData.observe(lifecycleOwner) {
-                tv1.text = "${it.city} ${it.data[0].hours[0].wea}"
-            }
-            dayLiveData.observe(lifecycleOwner) {
-                tv2.text = "${it.city} ${it.air}"
-            }
+        LocationHelper.normalLocationLiveData.observe(lifecycleOwner) {
+            viewModel?.apply {
+                weekLiveData.observe(lifecycleOwner) {
+                    tv1.text = "${it.city} ${it.data[0].hours[0].wea}"
+                }
+                dayLiveData.observe(lifecycleOwner) {
+                    tv2.text = "${it.city} ${it.air}"
+                }
 
-            requestDayWeather(lifecycleOwner.lifecycle)
-            requestWeekWeather(lifecycleOwner.lifecycle)
+                it?.also {
+                    requestDayWeather(lifecycleOwner.lifecycle, it.city)
+                    requestWeekWeather(lifecycleOwner.lifecycle, it.city)
+                }
+            }
         }
+        LocationHelper.requestNormalLocation()
     }
 }

@@ -1,9 +1,7 @@
-import com.four.buildsrc.androidTestImpl
+import com.four.buildsrc.Dep
+import com.four.buildsrc.Env
 import com.four.buildsrc.implProject
 import com.four.buildsrc.implRepo
-import com.four.buildsrc.testImpl
-import com.four.buildsrc.Env
-import com.four.buildsrc.Dep
 
 plugins {
     id("com.android.library")
