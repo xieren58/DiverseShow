@@ -51,15 +51,27 @@ open class TaskHoldersHandlerTransform : Transform() {
         var taskCount = 0
         invocation.inputs.forEach {
             //并发流处理
-            taskCount += handleJarsSync(it.jarInputs, invocation, prefix, initClassSet, taskOverCount)
+            it.jarInputs.forEach {
+                taskCount++
+                executor.submit {
+                    handleJar(it, invocation, prefix, initClassSet)
+                    taskOverCount.getAndIncrement()
+                }
+            }
             //并发流处理
-            taskCount += handleDirsSync(it.directoryInputs, invocation, prefix, initClassSet, taskOverCount)
+            it.directoryInputs.forEach {
+                taskCount++
+                executor.submit {
+                    handleDir(it, invocation, prefix, initClassSet)
+                    taskOverCount.getAndIncrement()
+                }
+            }
         }
 
         val loopStart = System.currentTimeMillis()
         while (taskCount != taskOverCount.get()) {
             //空转就好，因为扫描是非常省时的
-            if (System.currentTimeMillis() - loopStart > 3000) {
+            if (System.currentTimeMillis() - loopStart > 5000) {
                 throw RuntimeException("loop timeout !!!")
             }
         }
@@ -114,61 +126,71 @@ open class TaskHoldersHandlerTransform : Transform() {
         }
     }
 
-    private fun handleJarsSync(jars: Collection<JarInput>,
-                               invocation: TransformInvocation,
-                               prefix: String,
-                               initClassSet: MutableSet<String>,
-                               taskOverCount: AtomicInteger): Int {
-        jars.forEach { jar ->
-            executor.submit {
-                val src: File = jar.file
-                val dest: File = invocation.outputProvider.getContentLocation(
-                    jar.name, jar.contentTypes, jar.scopes, Format.JAR
-                )
-                val jarFile = JarFile(src)
-                jarFile.entries().iterator().forEach { entry ->
-                    val name = entry.name
-                    if (name.startsWith(prefix) && !name.endsWith("Companion${SdkConstants.DOT_CLASS}")) {
-                        val target = getJavaNameFromClassName(entry.name)
-                        initClassSet.add(target)
-                        Logger.d("找到 $target")
-                    }
-                }
-                FileUtils.copyFile(src, dest)
-                taskOverCount.getAndIncrement()
+    private fun handleJar(jar: JarInput,
+                          invocation: TransformInvocation,
+                          prefix: String,
+                          initClassSet: MutableSet<String>) {
+        if (jar.status == Status.REMOVED) {
+            return
+        }
+        val src: File = jar.file
+        val dest: File = invocation.outputProvider.getContentLocation(
+            jar.name, jar.contentTypes, jar.scopes, Format.JAR
+        )
+        val jarFile = JarFile(src)
+        jarFile.entries().iterator().forEach { entry ->
+            val name = entry.name
+            if (name.startsWith(prefix) && !name.endsWith("Companion${SdkConstants.DOT_CLASS}")) {
+                val target = getJavaNameFromClassName(entry.name)
+                initClassSet.add(target)
+                Logger.d("找到 $target")
             }
         }
-        return jars.size
+        FileUtils.copyFile(src, dest)
     }
 
-    private fun handleDirsSync(directoryInputs: Collection<DirectoryInput>,
-                               invocation: TransformInvocation,
-                               prefix: String,
-                               initClassSet: MutableSet<String>,
-                               taskOverCount: AtomicInteger): Int {
-        directoryInputs.forEach { dir ->
-            executor.submit {
-                val src: File = dir.file
-                val dest = invocation.outputProvider.getContentLocation(
-                    dir.name, dir.contentTypes, dir.scopes, Format.DIRECTORY
-                )
-                val pck = File(src, StringConstant.APP_INIT_CLASS_PCK.replace('.', File.separatorChar))
-                if (pck.exists() && pck.isDirectory) {
-                    val files = FileUtils.listFiles(pck,
-                        SuffixFileFilter(SdkConstants.DOT_CLASS, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
-                    files.forEach { file ->
-                        val path = file.absolutePath.replace("${src.absolutePath}${File.separatorChar}", "")
-                        if (path.startsWith(prefix) && !path.endsWith("Companion${SdkConstants.DOT_CLASS}")) {
-                            val target = getJavaNameFromClassName(path)
-                            initClassSet.add(target)
-                            Logger.d("找到 $target")
-                        }
-                    }
+    private fun handleDir(directoryInput: DirectoryInput,
+                          invocation: TransformInvocation,
+                          prefix: String,
+                          initClassSet: MutableSet<String>) {
+        val src: File = directoryInput.file
+        val srcDirPath = src.absolutePath
+        val destDirPath = invocation.outputProvider.getContentLocation(directoryInput.name,
+            directoryInput.contentTypes, directoryInput.scopes, Format.DIRECTORY).absolutePath
+        File(destDirPath).mkdirs()
+        val pck = File(src, StringConstant.APP_INIT_CLASS_PCK.replace('.', File.separatorChar))
+        val changedJars = directoryInput.changedFiles.map { MyPair(it.key.absolutePath, it.value) }
+        if (pck.exists() && pck.isDirectory) {
+            val files = FileUtils.listFiles(pck,
+                SuffixFileFilter(SdkConstants.DOT_CLASS, IOCase.INSENSITIVE), TrueFileFilter.INSTANCE)
+            files.forEach { file ->
+                if (changedJars.contains(Pair(file.absolutePath, Status.REMOVED))) {
+                    return@forEach
                 }
-                FileUtils.copyDirectory(src, dest)
-                taskOverCount.getAndIncrement()
+                val path = file.absolutePath.replace("${src.absolutePath}${File.separatorChar}", "")
+                if (path.startsWith(prefix) && !path.endsWith("Companion${SdkConstants.DOT_CLASS}")) {
+                    val target = getJavaNameFromClassName(path)
+                    initClassSet.add(target)
+                    Logger.d("找到 $target")
+
+                    val destPath = file.absolutePath.replace(srcDirPath, destDirPath)
+                    val destFile = File(destPath)
+                    FileUtils.touch(destFile)
+                    FileUtils.copyFile(file, destFile)
+                }
             }
         }
-        return directoryInputs.size
+    }
+
+    class MyPair<A, B>(val a: A, val b: B) {
+        override fun equals(other: Any?): Boolean {
+            return other != null && other is MyPair<*, *> && other.a == a && other.b == b
+        }
+
+        override fun hashCode(): Int {
+            var result = a.hashCode()
+            result = 31 * result + b.hashCode()
+            return result
+        }
     }
 }

@@ -20,12 +20,12 @@ val allProjects = arrayOf(
  * app和java module默认都会依赖上
  */
 val defProjects = arrayOf(
-    ":app",
+    ":app"//,
 
 //   因为这三个module是按照maven库的形式依赖，看源码可以取消注释
-    ":global:lib-init:app-init-handler",
-    ":global:lib-init:app-init-processor",
-    ":global:lib-init:app-init-transform"
+//    ":global:lib-init:app-init-handler",
+//    ":global:lib-init:app-init-processor",
+//    ":global:lib-init:app-init-transform"
 )
 
 gradle.settingsEvaluated {
