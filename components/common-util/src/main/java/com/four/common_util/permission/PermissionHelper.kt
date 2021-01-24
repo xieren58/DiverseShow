@@ -10,6 +10,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import com.four.common_util.log.DSLog
 import com.four.common_util.rx.postUIThread
 import com.four.common_util.rx.runUIThread
+import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.atomic.AtomicReference
 
@@ -22,7 +23,10 @@ object PermissionHelper {
 
     private val callbackList = mutableListOf<CallbackWithCode>()
 
-    private val atomicCallbackList = AtomicReference(callbackList)
+    private val initAtomicValue = false
+
+    private val atomicBoolean = AtomicBoolean(initAtomicValue)
+
 
     /**
      * 请求权限，采用此方法就够了
@@ -119,18 +123,11 @@ object PermissionHelper {
     }
 
     private fun putCallback(callback: CallbackWithCode) {
-        while (!tryPutCallback(callback)){ }
-    }
-
-    private fun tryPutCallback(callback: CallbackWithCode) : Boolean {
-        val subjectList = atomicCallbackList.getAndSet(null)
-        return if (subjectList == null) {
-            false
-        } else {
-            subjectList.add(callback)
-            atomicCallbackList.set(subjectList)
-            true
+        while (!atomicBoolean.compareAndSet(initAtomicValue, !initAtomicValue)) {
+            //CAS
         }
+        callbackList.add(callback)
+        atomicBoolean.set(initAtomicValue)
     }
 
     interface Callback {
