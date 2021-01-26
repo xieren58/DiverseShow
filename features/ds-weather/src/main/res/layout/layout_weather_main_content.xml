@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@android:color/darker_gray">
+
+    <LinearLayout
+        android:id="@+id/llTemperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="64dp"
+        android:orientation="horizontal"
+        android:layout_centerHorizontal="true">
+
+        <TextView
+            android:id="@+id/tvMinus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:text="-"
+            android:textSize="86dp"
+            android:textScaleX="0.6"
+            android:layout_marginRight="-2dp"
+            android:visibility="gone"
+            android:textColor="@color/standard_white" />
+
+        <TextView
+            android:id="@+id/tvTodayTemperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:text="0"
+            android:textSize="86dp"
+            android:textScaleX="0.96"
+            android:textColor="@color/standard_white" />
+
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="°C"
+        android:textSize="20dp"
+        android:layout_marginTop="18dp"
+        android:layout_marginStart="2dp"
+        android:textColor="@color/standard_white"
+        android:layout_alignTop="@id/llTemperature"
+        android:layout_toEndOf="@id/llTemperature"/>
+
+    <TextView
+        android:id="@+id/tvTodaySky"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="26dp"
+        android:text="晴"
+        android:layout_below="@id/llTemperature"
+        android:textColor="@color/standard_white"
+        android:layout_centerHorizontal="true"/>
+
+    <ImageView
+        android:id="@+id/ivTodayAir"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="5dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="@dimen/standard_content_margin"
+        android:background="@drawable/background_icon_white_circle"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/tvTodaySky"
+        android:src="@drawable/ic_air_white" />
+
+    <TextView
+        android:id="@+id/tvTodayAir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="center"
+        android:textColor="@color/standard_white"
+        android:textSize="14sp"
+        android:text="空气良 48"
+        android:layout_toEndOf="@id/ivTodayAir"
+        android:layout_alignTop="@id/ivTodayAir"
+        android:layout_alignBottom="@id/ivTodayAir"/>
+
+    <ImageView
+        android:id="@+id/ivTodayWater"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:padding="5dp"
+        android:layout_marginStart="@dimen/standard_content_margin"
+        android:background="@drawable/background_icon_white_circle"
+        android:layout_marginEnd="8dp"
+        android:layout_alignTop="@id/ivTodayAir"
+        android:layout_alignBottom="@id/ivTodayAir"
+        android:layout_toStartOf="@id/tvTodayWater"
+        android:src="@drawable/ic_water_white" />
+
+    <TextView
+        android:id="@+id/tvTodayWater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:gravity="center"
+        android:textSize="14sp"
+        android:textColor="@color/standard_white"
+        android:layout_alignTop="@id/ivTodayAir"
+        android:layout_alignBottom="@id/ivTodayAir"
+        android:layout_marginEnd="@dimen/standard_content_margin"
+        android:layout_below="@id/tvTodaySky"
+        android:text="降水概率 0%"/>
+
+</RelativeLayout>

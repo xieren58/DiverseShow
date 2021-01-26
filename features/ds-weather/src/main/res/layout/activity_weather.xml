@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WeatherActivity">
+    android:orientation="vertical"
+    android:background="@android:color/darker_gray"
+    tools:context=".WeatherActivity"
+    android:paddingTop="12dp">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnRequest"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="请求"
-        />
+    <include layout="@layout/layout_weather_top_bar" />
 
-    <TextView
-        android:id="@+id/text1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#000000"
-        android:layout_gravity="center"
-        android:layout_marginTop="100dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-</FrameLayout>
+            <include layout="@layout/layout_weather_main_content" />
+
+            <include layout="@layout/layout_feature_simple_weather"/>
+
+            <include layout="@layout/layout_today_detail" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</LinearLayout>

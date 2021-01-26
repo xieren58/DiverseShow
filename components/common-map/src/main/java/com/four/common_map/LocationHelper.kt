@@ -18,24 +18,24 @@ object LocationHelper {
     //为空则请求失败
     val normalLocationLiveData = MutableLiveData<AMapLocation?>()
 
-    private lateinit var locationManager: LocationManager
+    private var locationManager: LocationManager? = null
 
     fun requestExactLocation() {
         DSLog.map().debug("request exact location")
-        locationManager.requestExactLocation()
+        locationManager?.requestExactLocation()
     }
 
     fun requestNormalLocation() {
         DSLog.map().debug("request normal location")
-        locationManager.requestNormalLocation()
+        locationManager?.requestNormalLocation()
     }
 
     //初始化定位
-    @OnAppLifeChanged(AppLifeEvent.ON_CREATE)
+    @OnAppLifeChanged(AppLifeEvent.AFTER_FIRST_FRAME)
     fun init(app: Application) {
         Schedulers.computation().scheduleDirect {
             locationManager = LocationManager(app, exactLocationLiveData, normalLocationLiveData)
-            requestExactLocation()
+            requestNormalLocation()
         }
     }
 }

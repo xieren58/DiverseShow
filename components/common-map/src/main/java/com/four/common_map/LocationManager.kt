@@ -8,9 +8,6 @@ import com.amap.api.location.AMapLocationClientOption
 import com.amap.api.location.AMapLocationListener
 import com.four.common_util.log.DSLog
 
-/**
- * 有一说一，这个定位时间太长了
- */
 class LocationManager(private val context: Context,
                       private val exactLocationLiveData: MutableLiveData<AMapLocation?>,
                       private val normaLocationLiveData: MutableLiveData<AMapLocation?>
@@ -29,13 +26,11 @@ class LocationManager(private val context: Context,
 
     override fun onLocationChanged(location: AMapLocation?) {
         DSLog.map().debug("location change ${location?.address}")
-        if (lastLocation == null) {
-            normaLocationLiveData.postValue(location)
-        }
         if (location != null) {
             lastLocation = location
         }
-        exactLocationLiveData.postValue(lastLocation)
+        normaLocationLiveData.postValue(location)
+        exactLocationLiveData.postValue(location)
         isLocating = false
     }
 
@@ -59,8 +54,10 @@ class LocationManager(private val context: Context,
     private fun tryStartLocation() {
         if (!isLocating) {
             isLocating = true
-            if (lastLocation == null) {
+            //提高首次定位速度
+            if (lastLocation == null || lastLocation?.address.isNullOrEmpty()) {
                 client.setLocationOption(simpleLocationOption)
+                DSLog.map().debug("simple locating.")
             } else {
                 client.setLocationOption(exactLocationOption)
             }
@@ -72,7 +69,7 @@ class LocationManager(private val context: Context,
         locationMode = AMapLocationClientOption.AMapLocationMode.Battery_Saving
         httpTimeOut = 15000
         isGpsFirst = false
-        isNeedAddress = false
+        isNeedAddress = true
         isOnceLocation = true
     }
 

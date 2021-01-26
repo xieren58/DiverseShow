@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@android:color/darker_gray">
+
+    <ImageView
+        android:id="@+id/ivAdd"
+        android:layout_width="@dimen/top_bar_icon_width"
+        android:layout_height="@dimen/top_bar_icon_width"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_add_white"
+        android:layout_marginStart="@dimen/standard_content_margin"
+        android:layout_gravity="start|center"/>
+
+    <TextView
+        android:id="@+id/tvLocationTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="正在定位..."
+        android:textSize="21sp"
+        android:textColor="@color/standard_white"
+        android:layout_gravity="center"/>
+
+    <ImageView
+        android:id="@+id/ivOption"
+        android:layout_width="@dimen/top_bar_icon_width"
+        android:layout_height="@dimen/top_bar_icon_width"
+        android:src="@drawable/ic_option_white"
+        android:layout_marginEnd="@dimen/standard_content_margin"
+        android:layout_gravity="end|center"/>
+
+</FrameLayout>
