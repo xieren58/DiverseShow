@@ -9,7 +9,7 @@
         android:id="@+id/llTemperature"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="82dp"
+        android:layout_marginTop="72dp"
         android:orientation="horizontal"
         android:layout_centerHorizontal="true">
 
@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:gravity="top"
             android:text="-"
-            android:textSize="86dp"
+            android:textSize="100dp"
             android:textScaleX="0.6"
             android:layout_marginRight="-2dp"
             android:visibility="gone"
@@ -63,7 +63,7 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:padding="5dp"
-        android:layout_marginTop="92dp"
+        android:layout_marginTop="82dp"
         android:layout_marginBottom="16dp"
         android:layout_marginStart="@dimen/standard_content_margin"
         android:background="@drawable/background_icon_white_circle"

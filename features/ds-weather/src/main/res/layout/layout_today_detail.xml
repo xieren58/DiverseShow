@@ -1,6 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:background="@android:color/darker_gray">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <ImageView
+        android:id="@+id/ivSunOut"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="@dimen/standard_content_margin"
+        android:src="@drawable/ic_sun_out"/>
+
+    <TextView
+        android:id="@+id/tvSunOut"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/standard_white"
+        android:textSize="12dp"
+        android:gravity="center"
+        android:text="日出 07:00"
+        android:layout_marginStart="4dp"
+        android:layout_alignTop="@id/ivSunOut"
+        android:layout_alignBottom="@id/ivSunOut"
+        android:layout_toEndOf="@id/ivSunOut"/>
+
+    <ImageView
+        android:id="@+id/ivSunIn"
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:layout_marginStart="38dp"
+        android:layout_alignTop="@id/ivSunOut"
+        android:layout_alignBottom="@id/ivSunOut"
+        android:layout_toEndOf="@id/tvSunOut"
+        android:src="@drawable/ic_sun_in"/>
+
+    <TextView
+        android:id="@+id/tvSunIn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/standard_white"
+        android:textSize="12dp"
+        android:gravity="center"
+        android:text="日落 18:00"
+        android:layout_marginStart="4dp"
+        android:layout_alignTop="@id/ivSunOut"
+        android:layout_alignBottom="@id/ivSunOut"
+        android:layout_toEndOf="@id/ivSunIn"/>
+
+
+
+</RelativeLayout>
