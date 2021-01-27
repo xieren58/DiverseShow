@@ -24,6 +24,8 @@
 
             <include layout="@layout/layout_feature_simple_weather"/>
 
+            <include layout="@layout/layout_24_hour_weather"/>
+
             <include layout="@layout/layout_today_detail" />
 
         </LinearLayout>

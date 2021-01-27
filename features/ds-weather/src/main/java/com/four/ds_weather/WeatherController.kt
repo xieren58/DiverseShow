@@ -8,7 +8,10 @@ import com.amap.api.location.AMapLocation
 import com.four.base.zy.BaseController
 import com.four.base.zy.IViewFinder
 import com.four.common_map.LocationHelper
+import com.four.common_util.log.DSLog
 import com.four.common_util.permission.PermissionHelper
+import com.four.ds_weather.controllers.Feature24HourController
+import com.four.ds_weather.controllers.FeatureListController
 import com.four.ds_weather.controllers.MainWeatherContentController
 import com.four.ds_weather.controllers.TopBarController
 import com.four.ds_weather.net.DayWeatherBean
@@ -22,10 +25,11 @@ class WeatherController(context: Context, val activity: FragmentActivity)
     init {
         controllers.add(TopBarController(context))
         controllers.add(MainWeatherContentController(context))
+        controllers.add(FeatureListController(context))
+        controllers.add(Feature24HourController(context))
     }
 
     override fun bindView(finder: IViewFinder) { }
-
 
     override fun initData() {
         viewModel?.also {
@@ -45,7 +49,6 @@ class WeatherController(context: Context, val activity: FragmentActivity)
         }
     }
 
-
     override fun onLocationChanged(location: AMapLocation) {
         controllers.forEach { controller ->
             if (controller is ILocationCallback) {
@@ -54,8 +57,11 @@ class WeatherController(context: Context, val activity: FragmentActivity)
         }
     }
 
-
     override fun onDayWeatherData(bean: DayWeatherBean) {
+        if (bean.tem.isNullOrEmpty()) {
+            DSLog.def().error("day data is null!!!")
+            return
+        }
         controllers.forEach { controller ->
             if (controller is IWeatherCallback) {
                 controller.onDayWeatherData(bean)
@@ -64,6 +70,10 @@ class WeatherController(context: Context, val activity: FragmentActivity)
     }
 
     override fun onWeekWeatherData(bean: WeekWeatherBean) {
+        if (bean.data.isNullOrEmpty()) {
+            DSLog.def().error("week data is null!!!")
+            return
+        }
         controllers.forEach { controller ->
             if (controller is IWeatherCallback) {
                 controller.onWeekWeatherData(bean)
@@ -112,7 +122,11 @@ class WeatherController(context: Context, val activity: FragmentActivity)
     private fun requestWeatherData() {
         viewModel?.also {
             it.requestDayWeather(lifecycleOwner.lifecycle, location.district ?: location.city)
-            it.requestWeekWeather(lifecycleOwner.lifecycle, location.district ?: location.city)
+            it.requestWeekWeather(lifecycleOwner.lifecycle,
+                (location.district ?: location.city).let { location ->
+                    //需要去除尾缀
+                    location.substring(0, location.length - 1)
+            })
         }
     }
 }

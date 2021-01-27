@@ -37,7 +37,13 @@ class MainWeatherContentController(context: Context) : BaseController<WeatherMod
             tvMinus.visibility = View.GONE
         }
         tvSky.text = bean.wea
-        tvAir.text = "空气${bean.air_level} ${bean.air}"
+        tvAir.text = "${
+            if(bean.aqi.air_level.length <= 2) {
+                "空气${bean.aqi.air_level}"
+            } else {
+                bean.aqi.air_level
+            }
+        } ${bean.air}"
         //md 居然不下发降水概率
         tvWater.text = "降水概率 ${getWaterProbability(bean.wea)}"
     }
@@ -51,12 +57,12 @@ class MainWeatherContentController(context: Context) : BaseController<WeatherMod
                 "90%"
             }
             wea.contains("雪") -> {
-                "20%"
+                "10%"
             }
             else -> {
                 when (wea) {
-                    "阴" -> "40%"
-                    "多云" -> "30%"
+                    "阴" -> "30%"
+                    "多云" -> "20%"
                     else -> "0%"
                 }
             }

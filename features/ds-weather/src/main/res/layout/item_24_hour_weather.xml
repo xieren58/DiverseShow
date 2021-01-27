@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="1dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center_horizontal"
+    tools:layout_width="100dp"
+    tools:background="@android:color/darker_gray">
+
+    <TextView
+        android:id="@+id/tvHourTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="15:00"
+        android:textSize="13dp"
+        android:textColor="#88fefefe"/>
+
+    <TextView
+        android:id="@+id/tvHourTem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="4°"
+        android:textStyle="bold"
+        android:textSize="12dp"
+        android:layout_marginTop="2dp"
+        android:textColor="@color/standard_white"/>
+
+    <TextView
+        android:id="@+id/tvHourWea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="晴"
+        android:textSize="14dp"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/standard_white"/>
+
+    <TextView
+        android:id="@+id/tvHourWind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#88fefefe"
+        android:textSize="12dp"
+        android:layout_marginTop="8dp"
+        android:text="北风 3级"/>
+
+    <TextView
+        android:id="@+id/tvHourAir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="9dp"
+        android:text="良"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/background_item_wea_tag"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:textColor="@color/standard_white"/>
+
+</LinearLayout>

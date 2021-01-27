@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="standard_white">#fefefe</color>
+    <color name="white_55_transparent">#55fefefe</color>
 </resources>

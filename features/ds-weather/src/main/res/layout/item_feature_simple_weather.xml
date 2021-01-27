@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="46dp"
+    tools:background="@android:color/darker_gray">
+
+    <ImageView
+        android:id="@+id/icSmallWeather"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/ic_weather"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"/>
+
+    <TextView
+        android:id="@+id/tvWhichDay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17dp"
+        android:text="-"
+        android:layout_marginStart="10dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/icSmallWeather"
+        android:textColor="@color/standard_white"/>
+
+    <TextView
+        android:id="@+id/tvItemPoint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="·"
+        android:textSize="24dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/tvWhichDay"
+        android:textColor="@color/standard_white"/>
+
+    <TextView
+        android:id="@+id/tvItemWea"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17dp"
+        android:text="-"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/tvItemPoint"
+        android:textColor="@color/standard_white"/>
+
+    <TextView
+        android:id="@+id/tvItemAir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10dp"
+        android:text="-"
+        android:background="@drawable/background_item_wea_tag"
+        android:layout_marginStart="8dp"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@id/tvItemWea"
+        android:textColor="@color/standard_white"/>
+
+    <TextView
+        android:id="@+id/tvItemTemperatureScope"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="17dp"
+        android:textColor="@color/standard_white"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:text="-° / -°"/>
+
+
+</RelativeLayout>

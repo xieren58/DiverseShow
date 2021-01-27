@@ -10,11 +10,6 @@ data class WeekWeatherBean(
     val `data`: List<Data>,
     val update_time: String
 ) {
-    data class Alarm(
-        val alarm_content: String,
-        val alarm_level: String,
-        val alarm_type: String
-    )
 
     data class Aqi(
         val air: String,
@@ -74,6 +69,12 @@ data class WeekWeatherBean(
         val win_speed: String
     )
 
+    data class Alarm(
+        val alarm_content: String,
+        val alarm_level: String,
+        val alarm_type: String
+    )
+
     data class Hour(
         val hours: String,
         val tem: String,
@@ -89,5 +90,3 @@ data class WeekWeatherBean(
         val title: String
     )
 }
-
-
