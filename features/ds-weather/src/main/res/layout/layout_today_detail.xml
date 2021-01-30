@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="18dp"
     xmlns:tools="http://schemas.android.com/tools"
     tools:background="@android:color/darker_gray">
 
@@ -16,7 +17,7 @@
         android:id="@+id/tvSunOut"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/standard_white"
+        android:textColor="#ccfefefe"
         android:textSize="12dp"
         android:gravity="center"
         android:text="日出 07:00"
@@ -39,7 +40,7 @@
         android:id="@+id/tvSunIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/standard_white"
+        android:textColor="#ccfefefe"
         android:textSize="12dp"
         android:gravity="center"
         android:text="日落 18:00"
@@ -47,7 +48,6 @@
         android:layout_alignTop="@id/ivSunOut"
         android:layout_alignBottom="@id/ivSunOut"
         android:layout_toEndOf="@id/ivSunIn"/>
-
 
 
 </RelativeLayout>

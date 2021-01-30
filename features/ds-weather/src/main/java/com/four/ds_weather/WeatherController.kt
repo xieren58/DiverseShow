@@ -10,10 +10,7 @@ import com.four.base.zy.IViewFinder
 import com.four.common_map.LocationHelper
 import com.four.common_util.log.DSLog
 import com.four.common_util.permission.PermissionHelper
-import com.four.ds_weather.controllers.Feature24HourController
-import com.four.ds_weather.controllers.FeatureListController
-import com.four.ds_weather.controllers.MainWeatherContentController
-import com.four.ds_weather.controllers.TopBarController
+import com.four.ds_weather.controllers.*
 import com.four.ds_weather.net.DayWeatherBean
 import com.four.ds_weather.net.WeekWeatherBean
 
@@ -27,6 +24,7 @@ class WeatherController(context: Context, val activity: FragmentActivity)
         controllers.add(MainWeatherContentController(context))
         controllers.add(FeatureListController(context))
         controllers.add(Feature24HourController(context))
+        controllers.add(TodayDetailController(context))
     }
 
     override fun bindView(finder: IViewFinder) { }
