@@ -63,6 +63,10 @@ object Dep {
     const val skillHotfixProject = ":android-skill:hotfix"
     const val skillPluginsProject = ":android-skill:plugins"
     const val openCVProject = ":openCV"
+
+    //协程
+    const val kotlinCoroutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7"
+    const val kotlinCoroutinesAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.7"
 }
 
 fun DependencyHandlerScope.implRepo(variant: String) {

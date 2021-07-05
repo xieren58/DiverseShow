@@ -46,4 +46,7 @@ dependencies {
 
     implRepo(Dep.globalInitHandler)
     kaptRepo(Dep.globalInitProcessor)
+
+    apiRepo(Dep.kotlinCoroutinesCore)
+    apiRepo(Dep.kotlinCoroutinesAndroid)
 }
